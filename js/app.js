@@ -156,21 +156,26 @@
 
   /** Arma la tarjeta de un hallazgo. */
   function renderHallazgo(h) {
+    // Si el problema está en un solo lugar, ya lo dice la línea de arriba:
+    // repetirlo en cada cita sería decir dos veces lo mismo.
+    const repetirLugar = h.ubicaciones.length > 1;
+
     return `
         <article class="hallazgo ${h.severidad}">
-          <span class="hallazgo-prioridad ${h.severidad}">${PRIORIDAD[h.severidad]}</span>
+          ${renderMeta(h)}
           <div class="hallazgo-titulo">${h.titulo}</div>
-          ${renderUbicaciones(h.ubicaciones)}
           <div class="hallazgo-desc">${h.descripcion}</div>
           ${
             h.ejemplos.length
-              ? `<p class="hallazgo-label">Dónde aparece en tu texto:</p>
-                 <div class="hallazgo-ejemplos">${h.ejemplos.map(renderEjemplo).join("\n")}</div>`
+              ? `<p class="hallazgo-label">En tu texto</p>
+                 <div class="hallazgo-ejemplos">${h.ejemplos
+                   .map((e) => renderEjemplo(e, repetirLugar))
+                   .join("\n")}</div>`
               : ""
           }
           ${
             h.sugerencia
-              ? `<p class="hallazgo-label">Cómo corregirlo:</p>
+              ? `<p class="hallazgo-label">Cómo corregirlo</p>
                  <div class="hallazgo-sugerencia">${h.sugerencia}</div>`
               : ""
           }
@@ -178,26 +183,37 @@
   }
 
   /**
-   * Muestra en qué parte del documento hay que hacer la corrección.
-   * Si el mismo problema aparece en varios lugares, los lista todos.
+   * La línea que encabeza cada corrección: qué tan importante es y en qué
+   * parte del documento hay que ir. Van juntas, como una sola frase, en vez
+   * de una etiqueta con recuadro y un montón de pastillas debajo.
    */
-  function renderUbicaciones(ubicaciones) {
-    if (!ubicaciones || ubicaciones.length === 0) return "";
-    const visibles = ubicaciones.slice(0, 6).map(escapeHtml);
-    const restantes = ubicaciones.length - visibles.length;
-    const chips = visibles.map((u) => `<span class="ubicacion-chip">${u}</span>`).join("");
-    const mas = restantes > 0 ? `<span class="ubicacion-mas">y ${restantes} lugar${restantes === 1 ? "" : "es"} más</span>` : "";
-    return `<div class="hallazgo-ubicaciones">
-      <span class="hallazgo-ubicaciones-label">Dónde corregir:</span>${chips}${mas}
-    </div>`;
+  function renderMeta(h) {
+    const prioridad = `<span class="hallazgo-prioridad ${h.severidad}">${PRIORIDAD[h.severidad]}</span>`;
+    if (!h.ubicaciones || h.ubicaciones.length === 0) {
+      return `<p class="hallazgo-meta">${prioridad}</p>`;
+    }
+
+    const visibles = h.ubicaciones.slice(0, 5).map(escapeHtml);
+    const restantes = h.ubicaciones.length - visibles.length;
+    const lugares = `<span class="hallazgo-ubicacion-texto">${visibles.join(", ")}</span>`;
+    const mas =
+      restantes > 0
+        ? ` <span class="ubicacion-mas">y ${restantes} lugar${restantes === 1 ? "" : "es"} más</span>`
+        : "";
+
+    return `<p class="hallazgo-meta">${prioridad} · ${lugares}${mas}</p>`;
   }
 
-  /** Cada cita del documento, con la etiqueta del lugar donde está. */
-  function renderEjemplo(ejemplo) {
+  /**
+   * Cada cita del documento. El lugar solo se nombra si la corrección afecta
+   * a más de uno; si es uno solo ya está dicho arriba.
+   */
+  function renderEjemplo(ejemplo, repetirLugar) {
     const cuerpo = escapeHtml(ejemplo.texto);
-    const lugar = ejemplo.ubicacion
-      ? `<span class="ejemplo-ubicacion">${escapeHtml(ejemplo.ubicacion)}</span>`
-      : "";
+    const lugar =
+      repetirLugar && ejemplo.ubicacion
+        ? `<span class="ejemplo-ubicacion">${escapeHtml(ejemplo.ubicacion)}</span>`
+        : "";
     return `<div class="ejemplo">${lugar}<span class="ejemplo-texto">${cuerpo}</span></div>`;
   }
 
