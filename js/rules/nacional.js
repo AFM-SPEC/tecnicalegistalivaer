@@ -32,6 +32,7 @@ window.ReglasNacional = [
       'Argentina, reunidos en Congreso, sancionan con fuerza de Ley:"',
     fuente: "Manual de Técnica Legislativa, regla 41.d — Constitución Nacional, art. 84",
     severidad: "alta",
+    ubicacionFija: "Al inicio, antes del Artículo 1°",
     check(text, { normalizar, contexto }) {
       const t = normalizar(text);
       const cumple = /sancionan con fuerza de ley|decretan con fuerza de ley/.test(t);
@@ -85,6 +86,7 @@ window.ReglasNacional = [
       'También es válido titular ese último artículo "De forma" seguido de la fórmula que corresponda.',
     fuente: 'Manual de Técnica Legislativa, regla 17.1.c — "artículo de forma"',
     severidad: "media",
+    ubicacionFija: "Al final, después del último artículo",
     check(text, { normalizar, contexto }) {
       const t = normalizar(text);
       const cumple =
@@ -163,6 +165,7 @@ window.ReglasNacional = [
       "Si el plazo general sí es lo que se quiere, se puede dejar así sin problema.",
     fuente: "Código Civil y Comercial de la Nación, art. 5°",
     severidad: "baja",
+    ubicacionFija: "Al final, junto a las disposiciones finales",
     check(text, { normalizar, contexto }) {
       const t = normalizar(text);
       const cumple = /entrar[aá] en vigencia|rige a partir de|vigencia a partir|entrada en vigor/.test(t);
@@ -399,6 +402,7 @@ window.ReglasNacional = [
     sugerencia: 'En vez de "Ley 25.089", escribir algo como "Ley de Creación del Registro Nacional de Ejemplo".',
     fuente: "Manual de Técnica Legislativa, regla 3, punto 2",
     severidad: "baja",
+    ubicacionFija: "En el título de la norma",
     check(text) {
       const primerArticulo = text.search(/art[íi]culo\s+1[°ºo]?\b/i);
       if (primerArticulo <= 0) return { cumple: true };
@@ -426,6 +430,7 @@ window.ReglasNacional = [
     sugerencia: 'En vez de un título genérico, escribir algo como: "Ley N° 25.087. Modificación de la Ley N° 20.429."',
     fuente: "Manual de Técnica Legislativa, regla 6, punto 1",
     severidad: "baja",
+    ubicacionFija: "En el título de la norma",
     check(text, { normalizar }) {
       const primerArticulo = text.search(/art[íi]culo\s+1[°ºo]?\b/i);
       if (primerArticulo <= 0) return { cumple: true };
@@ -452,6 +457,7 @@ window.ReglasNacional = [
     sugerencia: 'Agregar antes del Artículo 1° una lista tipo: "Artículo 1°. Objeto. — Artículo 2°. Definiciones. — ..."',
     fuente: "Manual de Técnica Legislativa, regla 2, punto 1",
     severidad: "baja",
+    ubicacionFija: "Al inicio, antes del Artículo 1°",
     check(text, { normalizar }) {
       const cantidadArticulos = (text.match(/art[íi]culo\s+\d+/gi) || []).length;
       if (cantidadArticulos < 15) return { cumple: true };
@@ -474,6 +480,7 @@ window.ReglasNacional = [
     sugerencia: 'Acortar el título a una frase breve, por ejemplo: "Ley de Creación del Registro Nacional de Ejemplo".',
     fuente: "Manual de Técnica Legislativa, regla 3, punto 1",
     severidad: "baja",
+    ubicacionFija: "En el título de la norma",
     check(text) {
       const primerArticulo = text.search(/art[íi]culo\s+1[°ºo]?\b/i);
       if (primerArticulo <= 0) return { cumple: true };
@@ -690,17 +697,17 @@ window.ReglasNacional = [
     sugerencia: "Mover el artículo o sección de disposiciones transitorias hacia el final del texto, después de las demás.",
     fuente: "Marco Teórico de Técnica Legislativa — orden temático de las disposiciones (punto A.1)",
     severidad: "baja",
-    check(text, { normalizar }) {
+    check(text, { normalizar, contexto }) {
       const t = normalizar(text);
       const m = t.match(/disposici(o|ó)n(es)? transitoria/);
       if (!m) return { cumple: true };
       const posicionRelativa = m.index / t.length;
+      if (posicionRelativa >= 0.6) return { cumple: true };
       return {
-        cumple: posicionRelativa >= 0.6,
-        ejemplos:
-          posicionRelativa >= 0.6
-            ? []
-            : ["Las disposiciones transitorias aparecen antes del último 40% del documento."],
+        cumple: false,
+        ejemplos: [
+          `Las transitorias aparecen acá, antes del último 40% del documento: "${contexto(text, m.index, 55)}"`,
+        ],
       };
     },
   },
@@ -767,6 +774,7 @@ window.ReglasNacional = [
     sugerencia: 'Agregar en el artículo correspondiente algo como: "...cuyo detalle consta en el Anexo I de la presente ley."',
     fuente: "Manual de Técnica Legislativa, regla 14, punto 1",
     severidad: "baja",
+    ubicacionFija: "En el artículo que trate el contenido del Anexo",
     check(text, { normalizar }) {
       const t = normalizar(text);
       const tieneAnexo = /\banexo\b/.test(t);
@@ -994,6 +1002,7 @@ window.ReglasNacional = [
     sugerencia: 'Encabezar el documento con su denominación, por ejemplo: "PROYECTO DE LEY" o "LEY N° 12.345".',
     fuente: "Manual de Técnica Legislativa, regla 1, punto 1.a",
     severidad: "media",
+    ubicacionFija: "En el encabezado, antes del título",
     check(text, { normalizar }) {
       const inicio = normalizar(text.slice(0, 300));
       const tieneDenominacion = /\b(ley|decreto|resoluci[oó]n|ordenanza|disposici[oó]n|proyecto)\b/.test(inicio);
@@ -1015,6 +1024,7 @@ window.ReglasNacional = [
     sugerencia: 'Si el título dice "Registro Nacional de Ejemplo", los artículos deben llamarlo igual, no "el padrón" o "la base de datos".',
     fuente: "Manual de Técnica Legislativa, regla 4, punto 1",
     severidad: "baja",
+    ubicacionFija: "En el título de la norma",
     check(text, { normalizar }) {
       const primerArticulo = text.search(/art[íi]culo\s+1[°ºo]?\b/i);
       if (primerArticulo <= 0) return { cumple: true };
@@ -1086,6 +1096,7 @@ window.ReglasNacional = [
     sugerencia: 'Agregar como primer artículo algo como: "Artículo 1° -Objeto- La presente ley tiene por objeto regular..."',
     fuente: "Manual de Técnica Legislativa, regla 17, punto 1.a — Marco Teórico, disposiciones preliminares",
     severidad: "baja",
+    ubicacionFija: "En el Artículo 1°",
     check(text, { normalizar }) {
       const cantidadArticulos = (text.match(/art[íi]culo\s+\d+/gi) || []).length;
       if (cantidadArticulos < 5) return { cumple: true };
@@ -1175,6 +1186,7 @@ window.ReglasNacional = [
     sugerencia: 'Titular la norma, por ejemplo: "Aprobación del Tratado de Asunción para la constitución del MERCOSUR".',
     fuente: "Manual de Técnica Legislativa, regla 5, punto 1",
     severidad: "baja",
+    ubicacionFija: "En el título de la norma",
     check(text, { normalizar }) {
       const primerArticulo = text.search(/art[íi]culo\s+1[°ºo]?\b/i);
       if (primerArticulo <= 0) return { cumple: true };
@@ -1557,6 +1569,7 @@ window.ReglasNacional = [
     sugerencia: 'Agregar en el artículo que lo menciona: "...que como Anexo I forma parte integrante de la presente ley."',
     fuente: "Marco Teórico de Técnica Legislativa — seguridad jurídica, punto 2.f",
     severidad: "baja",
+    ubicacionFija: "En el artículo que menciona el Anexo",
     check(text, { normalizar }) {
       const t = normalizar(text);
       if (!/\banexo\b/.test(t)) return { cumple: true };

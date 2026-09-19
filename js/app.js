@@ -112,11 +112,12 @@
         <article class="hallazgo ${h.severidad}">
           <span class="hallazgo-prioridad ${h.severidad}">${PRIORIDAD[h.severidad]}</span>
           <div class="hallazgo-titulo">${h.titulo}</div>
+          ${renderUbicaciones(h.ubicaciones)}
           <div class="hallazgo-desc">${h.descripcion}</div>
           ${
             h.ejemplos.length
               ? `<p class="hallazgo-label">Dónde aparece en tu texto:</p>
-                 <div class="hallazgo-ejemplos">${h.ejemplos.map(escapeHtml).join("\n")}</div>`
+                 <div class="hallazgo-ejemplos">${h.ejemplos.map(renderEjemplo).join("\n")}</div>`
               : ""
           }
           ${
@@ -128,6 +129,30 @@
         </article>`
       )
       .join("");
+  }
+
+  /**
+   * Muestra en qué parte del documento hay que hacer la corrección.
+   * Si el mismo problema aparece en varios lugares, los lista todos.
+   */
+  function renderUbicaciones(ubicaciones) {
+    if (!ubicaciones || ubicaciones.length === 0) return "";
+    const visibles = ubicaciones.slice(0, 6).map(escapeHtml);
+    const restantes = ubicaciones.length - visibles.length;
+    const chips = visibles.map((u) => `<span class="ubicacion-chip">${u}</span>`).join("");
+    const mas = restantes > 0 ? `<span class="ubicacion-mas">y ${restantes} lugar${restantes === 1 ? "" : "es"} más</span>` : "";
+    return `<div class="hallazgo-ubicaciones">
+      <span class="hallazgo-ubicaciones-label">Dónde corregir:</span>${chips}${mas}
+    </div>`;
+  }
+
+  /** Cada cita del documento, con la etiqueta del lugar donde está. */
+  function renderEjemplo(ejemplo) {
+    const cuerpo = escapeHtml(ejemplo.texto);
+    const lugar = ejemplo.ubicacion
+      ? `<span class="ejemplo-ubicacion">${escapeHtml(ejemplo.ubicacion)}</span>`
+      : "";
+    return `<div class="ejemplo">${lugar}<span class="ejemplo-texto">${cuerpo}</span></div>`;
   }
 
   function escapeHtml(str) {

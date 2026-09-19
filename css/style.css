@@ -325,7 +325,65 @@ body {
   background: #060f1f66;
   border-radius: 3px;
   padding: 0.6rem 0.85rem;
+}
+
+/* ---------- Ubicación de la corrección ---------- */
+
+.hallazgo-ubicaciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 0.55rem;
+}
+
+.hallazgo-ubicaciones-label {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #fff8dc6b;
+  margin-right: 0.15rem;
+}
+
+.ubicacion-chip {
+  font-family: var(--font-graduate);
+  font-size: 0.7rem;
+  letter-spacing: 0.03em;
+  color: var(--color-navy);
+  background: var(--color-chiffon-warm);
+  border-radius: 3px;
+  padding: 0.16rem 0.5rem;
+  white-space: nowrap;
+}
+
+.ubicacion-mas {
+  font-size: 0.72rem;
+  color: #fff8dc80;
+  font-style: italic;
+}
+
+.ejemplo {
+  display: block;
   white-space: pre-wrap;
+}
+
+.ejemplo + .ejemplo {
+  margin-top: 0.55rem;
+  padding-top: 0.55rem;
+  border-top: 1px solid #fff8dc1a;
+}
+
+.ejemplo-ubicacion {
+  display: inline-block;
+  font-family: var(--font-graduate);
+  font-size: 0.66rem;
+  letter-spacing: 0.03em;
+  color: var(--color-chiffon-warm);
+  border: 1px solid #fff8dc40;
+  border-radius: 3px;
+  padding: 0.08rem 0.4rem;
+  margin-right: 0.45rem;
+  white-space: nowrap;
 }
 
 .sin-hallazgos {
