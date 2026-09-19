@@ -10,7 +10,7 @@
  *   severidad: 'alta' | 'media' | 'baja',
  *   sugerencia: 'Ejemplo concreto de cómo debería quedar el texto.',
  *   ubicacionFija: 'Al inicio, antes del Artículo 1°',  // opcional, ver abajo
- *   check(text) => { cumple: boolean, ejemplos?: string[] }
+ *   check(text, { normalizar, contexto, ordinal }) => { cumple: boolean, ejemplos?: string[] }
  * }
  *
  * UBICACIÓN DE CADA HALLAZGO
@@ -59,6 +59,17 @@ const RuleEngine = (() => {
 
   function escaparRegex(s) {
     return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  }
+
+  /**
+   * Escribe el número de un artículo como corresponde: con signo de ordinal
+   * del 1° al 9°, y sin él del 10 en adelante ("Artículo 10", no "Artículo 10°").
+   *
+   * Está acá y se le pasa a las reglas en check() para que haya una sola
+   * versión de este criterio en todo el proyecto.
+   */
+  function ordinal(numero) {
+    return numero <= 9 ? `${numero}°` : `${numero}`;
   }
 
   /**
@@ -119,7 +130,7 @@ const RuleEngine = (() => {
       const esEncabezado = h.numero > ultimoNumero || (h.numero === ultimoNumero && h.sufijo);
       if (!esEncabezado) continue;
       ultimoNumero = h.numero;
-      lista.push({ index: h.index, etiqueta: `Artículo ${h.numero}°${h.sufijo}` });
+      lista.push({ index: h.index, etiqueta: `Artículo ${ordinal(h.numero)}${h.sufijo}` });
     }
 
     return lista;
@@ -214,7 +225,7 @@ const RuleEngine = (() => {
       let resultado;
       citas = [];
       try {
-        resultado = rule.check(text, { normalizar, contexto });
+        resultado = rule.check(text, { normalizar, contexto, ordinal });
       } catch (err) {
         resultado = {
           cumple: false,

@@ -55,7 +55,7 @@ window.ReglasNacional = [
       'nuevo entre el 2° y el 3°, usar "Artículo 2° bis".',
     fuente: "Manual de Técnica Legislativa, regla 9, punto 4",
     severidad: "alta",
-    check(text, { contexto }) {
+    check(text, { contexto, ordinal }) {
       const matches = [...text.matchAll(/art[íi]culo\s+(\d+)\s*(bis|ter|quater|quinquies|sexies|septies)?/gi)];
       const base = matches.filter((m) => !m[2]);
       if (base.length === 0) {
@@ -67,7 +67,7 @@ window.ReglasNacional = [
         const encontrado = parseInt(base[i][1], 10);
         if (encontrado !== esperado) {
           problemas.push(
-            `Se esperaba "Artículo ${esperado}°" pero acá dice: "${contexto(text, base[i].index, 60)}"`
+            `Se esperaba "Artículo ${ordinal(esperado)}" pero acá dice: "${contexto(text, base[i].index, 60)}"`
           );
         }
       }
