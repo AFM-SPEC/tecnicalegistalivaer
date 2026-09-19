@@ -1,0 +1,6 @@
+# Archivos que macOS crea solo, no son parte del proyecto.
+.DS_Store
+
+# Copias de seguridad manuales hechas antes de un cambio.
+# Se quedan en el disco como red extra, pero el historial ya está en git.
+*.bak
