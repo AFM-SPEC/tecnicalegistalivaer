@@ -104,11 +104,42 @@
     const orden = { alta: 0, media: 1, baja: 2 };
     const ordenados = [...analisis.hallazgos].sort((a, b) => orden[a.severidad] - orden[b.severidad]);
 
-    const PRIORIDAD = { alta: "Prioridad alta", media: "Prioridad media", baja: "Prioridad baja" };
+    // Las de prioridad baja son muchas y, mezcladas con el resto, tapan lo
+    // importante. Se muestran aparte, plegadas, para que primero se vea lo que
+    // hay que mirar sí o sí.
+    const principales = ordenados.filter((h) => h.severidad !== "baja");
+    const menores = ordenados.filter((h) => h.severidad === "baja");
 
-    listaHallazgosEl.innerHTML = ordenados
-      .map(
-        (h) => `
+    let html = principales.map(renderHallazgo).join("");
+
+    if (principales.length === 0) {
+      html = `<div class="sin-principales">
+        No se detectaron problemas de prioridad alta ni media.
+      </div>`;
+    }
+
+    if (menores.length > 0) {
+      const plural = menores.length === 1;
+      // Si no hay nada más importante que mostrar, no tiene sentido esconderlas.
+      const abierto = principales.length === 0 ? " open" : "";
+      html += `
+        <details class="menores"${abierto}>
+          <summary class="menores-summary">
+            <span class="menores-titulo">Ver ${menores.length} sugerencia${plural ? "" : "s"} menor${plural ? "" : "es"}</span>
+            <span class="menores-hint">detalles de forma: puntuación, siglas, abreviaturas, redacción</span>
+          </summary>
+          <div class="menores-lista">${menores.map(renderHallazgo).join("")}</div>
+        </details>`;
+    }
+
+    listaHallazgosEl.innerHTML = html;
+  }
+
+  const PRIORIDAD = { alta: "Prioridad alta", media: "Prioridad media", baja: "Prioridad baja" };
+
+  /** Arma la tarjeta de un hallazgo. */
+  function renderHallazgo(h) {
+    return `
         <article class="hallazgo ${h.severidad}">
           <span class="hallazgo-prioridad ${h.severidad}">${PRIORIDAD[h.severidad]}</span>
           <div class="hallazgo-titulo">${h.titulo}</div>
@@ -126,9 +157,7 @@
                  <div class="hallazgo-sugerencia">${h.sugerencia}</div>`
               : ""
           }
-        </article>`
-      )
-      .join("");
+        </article>`;
   }
 
   /**

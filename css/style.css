@@ -203,6 +203,12 @@ body {
   margin-top: 0.6rem;
 }
 
+/* Sin esto, el "display: flex" de arriba le gana al atributo hidden y la barra
+   queda visible en 0% después de terminar el análisis. */
+.barra-progreso-wrap[hidden] {
+  display: none;
+}
+
 .barra-progreso {
   flex: 1;
   height: 8px;
@@ -415,4 +421,68 @@ body {
   width: auto;
   opacity: 0.7;
   margin-bottom: 0.75rem;
+}
+
+/* ---------- Sugerencias menores (plegadas) ---------- */
+
+.sin-principales {
+  background: #fff8dc0a;
+  border: 1px solid #fff8dc26;
+  border-radius: 3px;
+  padding: 0.9rem 1.1rem;
+  font-size: 0.9rem;
+  color: #fff8dcb8;
+  margin-bottom: 1rem;
+}
+
+.menores {
+  border: 1px dashed #fff8dc33;
+  border-radius: 3px;
+  margin-top: 1.2rem;
+}
+
+.menores-summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 0.85rem 1.1rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.2rem 0.7rem;
+}
+
+.menores-summary::-webkit-details-marker {
+  display: none;
+}
+
+.menores-summary::before {
+  content: "▸";
+  color: var(--baja);
+  font-size: 0.8rem;
+  transition: transform 0.15s ease;
+  display: inline-block;
+}
+
+.menores[open] > .menores-summary::before {
+  transform: rotate(90deg);
+}
+
+.menores-summary:hover {
+  background: #fff8dc0a;
+}
+
+.menores-titulo {
+  font-family: var(--font-graduate);
+  font-size: 0.85rem;
+  letter-spacing: 0.03em;
+  color: var(--color-chiffon);
+}
+
+.menores-hint {
+  font-size: 0.75rem;
+  color: #fff8dc70;
+}
+
+.menores-lista {
+  padding: 0 1.1rem 1.1rem;
 }
