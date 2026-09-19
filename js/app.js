@@ -11,8 +11,14 @@
   const panelResultados = document.getElementById("panel-resultados");
   const resumenEl = document.getElementById("resumen");
   const listaHallazgosEl = document.getElementById("lista-hallazgos");
+  const accionesEl = document.getElementById("acciones");
+  const btnImprimir = document.getElementById("btn-imprimir");
+  const btnCopiar = document.getElementById("btn-copiar");
+  const copiarEstadoEl = document.getElementById("copiar-estado");
 
   let archivoActual = null;
+  // Último análisis, para poder imprimirlo o copiarlo sin volver a correrlo.
+  let ultimoAnalisis = null;
 
   const EXTENSIONES_VALIDAS = ["pdf", "doc", "docx", "md", "txt", "png", "jpg", "jpeg"];
 
@@ -38,7 +44,8 @@
     panelResultados.hidden = true;
   }
 
-  dropzone.addEventListener("click", () => fileInput.click());
+  // El clic sobre la zona de carga lo maneja el propio <label>: no hace falta
+  // JavaScript, y así el campo de archivo sigue siendo alcanzable con teclado.
 
   // El área de arrastre funcional cubre toda la pantalla, no solo el recuadro.
   let dragCounter = 0;
@@ -79,17 +86,27 @@
 
     const conteo = { alta: 0, media: 0, baja: 0 };
     for (const h of analisis.hallazgos) conteo[h.severidad]++;
+    const total = analisis.hallazgos.length;
 
     resumenEl.innerHTML = `
-      <span class="resumen-item alta">${conteo.alta} alta${conteo.alta === 1 ? "" : "s"}</span>
-      <span class="resumen-item media">${conteo.media} media${conteo.media === 1 ? "" : "s"}</span>
-      <span class="resumen-item baja">${conteo.baja} baja${conteo.baja === 1 ? "" : "s"}</span>
+      <p class="resumen-total">
+        ${total} ${total === 1 ? "corrección sugerida" : "correcciones sugeridas"}
+        sobre ${analisis.totalReglas} regla${analisis.totalReglas === 1 ? "" : "s"} evaluada${analisis.totalReglas === 1 ? "" : "s"}
+      </p>
+      <ul class="resumen-desglose">
+        <li class="resumen-item alta">${conteo.alta} de prioridad alta</li>
+        <li class="resumen-item media">${conteo.media} de prioridad media</li>
+        <li class="resumen-item baja">${conteo.baja} menor${conteo.baja === 1 ? "" : "es"}</li>
+      </ul>
     `;
+
+    accionesEl.hidden = total === 0;
 
     if (analisis.totalReglas === 0) {
       listaHallazgosEl.innerHTML = `<div class="sin-hallazgos">
-        Todavía no hay reglas cargadas para el ámbito "${ambito}". Sumá el documento de
-        técnica legislativa correspondiente y completá <code>js/rules/${ambito === "nacional" ? "nacional" : ambito === "provincial" ? "provincial-er" : "municipal-er"}.js</code>.
+        Todavía no se puede revisar este tipo de norma. Por ahora la herramienta solo
+        analiza normas de ámbito nacional; los manuales de técnica legislativa de Entre
+        Ríos aún no están cargados.
       </div>`;
       return;
     }
@@ -184,8 +201,95 @@
     return `<div class="ejemplo">${lugar}<span class="ejemplo-texto">${cuerpo}</span></div>`;
   }
 
+  // ---------------------------------------------------------------------------
+  // Llevarse el resultado: imprimir / guardar en PDF y copiar
+  // ---------------------------------------------------------------------------
+
+  /** Pasa a texto plano lo que en pantalla es HTML (las reglas usan <em>, <strong>). */
+  function aTextoPlano(html) {
+    const tmp = document.createElement("div");
+    tmp.innerHTML = html;
+    return (tmp.textContent || "").replace(/\s+/g, " ").trim();
+  }
+
+  const PRIORIDAD_TEXTO = { alta: "PRIORIDAD ALTA", media: "PRIORIDAD MEDIA", baja: "SUGERENCIAS MENORES" };
+
+  /** Arma la lista completa en texto plano, para pegar en un mail o un documento. */
+  function analisisATexto(analisis) {
+    const fecha = new Date().toLocaleDateString("es-AR", { day: "numeric", month: "long", year: "numeric" });
+    const total = analisis.hallazgos.length;
+
+    const lineas = [
+      "REVISOR DE TÉCNICA LEGISLATIVA",
+      archivoActual ? `Documento: ${archivoActual.name}` : "",
+      `Fecha del análisis: ${fecha}`,
+      `${total} ${total === 1 ? "corrección sugerida" : "correcciones sugeridas"} sobre ${analisis.totalReglas} reglas evaluadas.`,
+      "",
+      "Estas son sugerencias orientativas de forma. La decisión de corregir, y cómo",
+      "hacerlo, queda a criterio de quien redacta la norma.",
+      "",
+    ].filter((l) => l !== "");
+
+    const orden = { alta: 0, media: 1, baja: 2 };
+    const ordenados = [...analisis.hallazgos].sort((a, b) => orden[a.severidad] - orden[b.severidad]);
+
+    let severidadActual = null;
+    let n = 0;
+    for (const h of ordenados) {
+      if (h.severidad !== severidadActual) {
+        severidadActual = h.severidad;
+        lineas.push("", "".padEnd(60, "-"), PRIORIDAD_TEXTO[h.severidad], "".padEnd(60, "-"), "");
+      }
+      n++;
+      lineas.push(`${n}. ${aTextoPlano(h.titulo)}`);
+      if (h.ubicaciones.length) lineas.push(`   Dónde corregir: ${h.ubicaciones.join(", ")}`);
+      lineas.push(`   Qué pasa: ${aTextoPlano(h.descripcion)}`);
+      for (const e of h.ejemplos) {
+        lineas.push(`   · ${e.ubicacion ? "[" + e.ubicacion + "] " : ""}${e.texto}`);
+      }
+      if (h.sugerencia) lineas.push(`   Cómo corregirlo: ${aTextoPlano(h.sugerencia)}`);
+      if (h.fuente) lineas.push(`   Fuente: ${h.fuente}`);
+      lineas.push("");
+    }
+
+    return lineas.join("\n");
+  }
+
+  btnImprimir.addEventListener("click", () => window.print());
+
+  // Al imprimir hay que abrir el grupo de sugerencias menores: si queda plegado,
+  // el navegador no imprime lo que hay adentro.
+  window.addEventListener("beforeprint", () => {
+    document.querySelectorAll("#lista-hallazgos details").forEach((d) => (d.open = true));
+  });
+
+  btnCopiar.addEventListener("click", async () => {
+    if (!ultimoAnalisis) return;
+    const texto = analisisATexto(ultimoAnalisis);
+    try {
+      await navigator.clipboard.writeText(texto);
+      copiarEstadoEl.textContent = "Lista copiada.";
+    } catch (err) {
+      // El portapapeles puede estar bloqueado (permisos, navegador viejo, http).
+      copiarEstadoEl.textContent = 'No se pudo copiar. Usá "Imprimir o guardar en PDF".';
+    }
+    setTimeout(() => (copiarEstadoEl.textContent = ""), 4000);
+  });
+
   function escapeHtml(str) {
     return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  /**
+   * Lleva la pantalla hasta el resultado. Sin esto, en el teléfono el análisis
+   * termina y el panel queda abajo, fuera de la vista: parece que no pasó nada.
+   */
+  function irAlResultado() {
+    const sinMovimiento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    panelResultados.scrollIntoView({ behavior: sinMovimiento ? "auto" : "smooth", block: "start" });
+    // Además del scroll, mover el foco: es lo que hace que un lector de
+    // pantalla empiece a leer el resultado en vez de quedarse en el botón.
+    panelResultados.focus({ preventScroll: true });
   }
 
   function actualizarProgreso(mensaje, fraccion) {
@@ -228,7 +332,9 @@
       const analisis = RuleEngine.analyze(texto, ambito);
 
       estado.textContent = "Análisis completo.";
+      ultimoAnalisis = analisis;
       renderResultados(analisis, ambito);
+      irAlResultado();
     } catch (err) {
       ocultarProgreso();
       estado.textContent = `Error: ${err.message}`;

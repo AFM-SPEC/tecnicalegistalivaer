@@ -7,7 +7,7 @@
 <link rel="icon" href="assets/neeti-logo.jpeg?v=2" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link href="https://fonts.googleapis.com/css2?family=Graduate&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="css/style.css?v=19" />
+<link rel="stylesheet" href="css/style.css?v=20" />
 </head>
 <body>
   <header class="site-header">
@@ -25,31 +25,46 @@
   <main class="container">
     <section class="panel" id="panel-carga">
       <p class="label">01 · Cargá el documento</p>
-      <div class="dropzone" id="dropzone">
-        <p id="dropzone-text">Arrastrá un archivo acá o hacé clic para elegirlo</p>
-        <p class="dropzone-hint">PDF, DOC, DOCX, MD, TXT, PNG, JPG, JPEG</p>
-        <input type="file" id="file-input" accept=".pdf,.doc,.docx,.md,.txt,.png,.jpg,.jpeg" hidden />
-      </div>
-      <p id="file-info" class="file-info"></p>
+      <label class="dropzone" id="dropzone">
+        <span id="dropzone-text" class="dropzone-texto">Arrastrá un archivo acá o hacé clic para elegirlo</span>
+        <span class="dropzone-hint">PDF, DOC, DOCX, MD, TXT, PNG, JPG, JPEG</span>
+        <input
+          type="file"
+          id="file-input"
+          class="file-input"
+          accept=".pdf,.doc,.docx,.md,.txt,.png,.jpg,.jpeg"
+        />
+      </label>
+      <p id="file-info" class="file-info" role="status"></p>
 
-      <p class="label">02 · Elegí el ámbito de la norma</p>
-      <div class="ambito-selector">
+      <p class="label" id="label-ambito">02 · Elegí el ámbito de la norma</p>
+      <p class="ayuda">
+        ¿Es una ley del Congreso de la Nación, una ley de la Legislatura provincial
+        o una ordenanza de un Concejo Deliberante?
+      </p>
+      <div class="ambito-selector" role="radiogroup" aria-labelledby="label-ambito">
         <label class="ambito-option">
           <input type="radio" name="ambito" value="nacional" checked />
           <span>Nacional</span>
         </label>
-        <label class="ambito-option">
-          <input type="radio" name="ambito" value="provincial" />
+        <label class="ambito-option ambito-option--proximamente">
+          <input type="radio" name="ambito" value="provincial" disabled />
           <span>Provincial (Entre Ríos)</span>
+          <span class="ambito-proximamente">Próximamente</span>
         </label>
-        <label class="ambito-option">
-          <input type="radio" name="ambito" value="municipal" />
+        <label class="ambito-option ambito-option--proximamente">
+          <input type="radio" name="ambito" value="municipal" disabled />
           <span>Municipal (Entre Ríos)</span>
+          <span class="ambito-proximamente">Próximamente</span>
         </label>
       </div>
+      <p class="ayuda ayuda--nota">
+        Por ahora solo está disponible el ámbito nacional. Los manuales de técnica
+        legislativa de Entre Ríos todavía no están cargados.
+      </p>
 
       <button id="btn-analizar" class="hero-btn" disabled>Analizar documento</button>
-      <p id="estado" class="estado"></p>
+      <p id="estado" class="estado" role="status" aria-live="polite"></p>
       <div id="barra-progreso-wrap" class="barra-progreso-wrap" hidden>
         <div class="barra-progreso">
           <div id="barra-progreso-relleno" class="barra-progreso-relleno"></div>
@@ -58,7 +73,7 @@
       </div>
     </section>
 
-    <section class="panel" id="panel-resultados" hidden>
+    <section class="panel" id="panel-resultados" tabindex="-1" hidden>
       <p class="label">Resultado del análisis</p>
       <p class="disclaimer">
         Estas son <strong>sugerencias orientativas</strong> de forma. La
@@ -68,6 +83,17 @@
         Las sugerencias se han redactado de forma coloquial para facilitar su acceso.
       </p>
       <div id="resumen" class="resumen"></div>
+
+      <div class="acciones" id="acciones">
+        <button type="button" id="btn-imprimir" class="btn-secundario">
+          Imprimir o guardar en PDF
+        </button>
+        <button type="button" id="btn-copiar" class="btn-secundario">
+          Copiar la lista
+        </button>
+        <span id="copiar-estado" class="copiar-estado" role="status" aria-live="polite"></span>
+      </div>
+
       <div id="lista-hallazgos"></div>
     </section>
   </main>
@@ -83,13 +109,13 @@
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.0.4/dist/tesseract.min.js"></script>
 
   <!-- Reglas -->
-  <script src="js/rules/nacional.js?v=19"></script>
-  <script src="js/rules/provincial-er.js?v=19"></script>
-  <script src="js/rules/municipal-er.js?v=19"></script>
-  <script src="js/rules/engine.js?v=19"></script>
+  <script src="js/rules/nacional.js?v=20"></script>
+  <script src="js/rules/provincial-er.js?v=20"></script>
+  <script src="js/rules/municipal-er.js?v=20"></script>
+  <script src="js/rules/engine.js?v=20"></script>
 
   <!-- App -->
-  <script src="js/extract.js?v=19"></script>
-  <script src="js/app.js?v=19"></script>
+  <script src="js/extract.js?v=20"></script>
+  <script src="js/app.js?v=20"></script>
 </body>
 </html>

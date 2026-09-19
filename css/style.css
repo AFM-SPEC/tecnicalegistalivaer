@@ -51,8 +51,8 @@ body {
   font-family: var(--font-graduate);
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: #fff8dc6b;
-  font-size: 0.68rem;
+  color: #fff8dc99;
+  font-size: 0.72rem;
   margin: 0 0 1rem;
 }
 
@@ -93,12 +93,44 @@ body {
 /* ---------- Dropzone ---------- */
 
 .dropzone {
+  display: block;
   border: 1px dashed #fff8dc4d;
   border-radius: 3px;
   padding: 2.25rem 1rem;
   text-align: center;
   cursor: pointer;
   transition: border-color 0.3s, background 0.3s;
+}
+
+.dropzone-texto {
+  display: block;
+  margin-bottom: 0.4rem;
+}
+
+/* El input no se ve, pero sigue estando: es lo que recibe el foco del teclado
+   y lo que el lector de pantalla anuncia como "elegir archivo". Por eso se
+   oculta así y no con el atributo hidden ni con display:none. */
+.file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Cuando el foco cae en ese input oculto, el recuadro entero tiene que
+   mostrarlo; si no, quien navega con teclado no ve dónde está parado. */
+.dropzone:focus-within {
+  border-color: var(--color-chiffon);
+  border-style: solid;
+  background: #fff8dc0a;
+  outline: 2px solid var(--color-chiffon);
+  outline-offset: 3px;
 }
 
 .dropzone:hover,
@@ -113,7 +145,7 @@ body {
 }
 
 .dropzone-hint {
-  color: #fff8dc73;
+  color: #fff8dc99;
   font-size: 0.78rem;
   letter-spacing: 0.05em;
   margin: 0;
@@ -246,25 +278,47 @@ body {
 }
 
 .resumen {
-  display: flex;
-  gap: 0.75rem;
   margin: 1.25rem 0;
+}
+
+.resumen-total {
+  font-family: var(--font-graduate);
+  font-size: 1rem;
+  color: var(--color-chiffon);
+  margin: 0 0 0.6rem;
+}
+
+.resumen-desglose {
+  display: flex;
   flex-wrap: wrap;
+  gap: 0.35rem 1.25rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
+/* Sin recuadro ni borde: es un resumen para leer, no un control para apretar.
+   El punto de color repite lo que dice el texto, para no depender del color. */
 .resumen-item {
-  border-radius: 3px;
-  padding: 0.5rem 1rem;
-  font-size: 0.72rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  font-weight: 600;
-  border: 1px solid currentColor;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.85rem;
+  color: #fff8dcb8;
 }
 
-.resumen-item.alta { color: var(--alta); }
-.resumen-item.media { color: var(--media); }
-.resumen-item.baja { color: var(--baja); }
+.resumen-item::before {
+  content: "";
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: currentColor;
+  flex: none;
+}
+
+.resumen-item.alta::before { background: var(--alta); }
+.resumen-item.media::before { background: var(--media); }
+.resumen-item.baja::before { background: var(--baja); }
 
 .hallazgo {
   border: 1px solid #fff8dc1a;
@@ -311,7 +365,7 @@ body {
   font-size: 0.68rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #fff8dc6b;
+  color: #fff8dc99;
   margin: 0.6rem 0 0.3rem;
 }
 
@@ -347,7 +401,7 @@ body {
   font-size: 0.68rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #fff8dc6b;
+  color: #fff8dc99;
   margin-right: 0.15rem;
 }
 
@@ -479,10 +533,188 @@ body {
 }
 
 .menores-hint {
-  font-size: 0.75rem;
-  color: #fff8dc70;
+  font-size: 0.78rem;
+  color: #fff8dc99;
 }
 
 .menores-lista {
   padding: 0 1.1rem 1.1rem;
+}
+
+/* ---------- Texto de ayuda ---------- */
+
+.ayuda {
+  font-size: 0.85rem;
+  color: #fff8dcb8;
+  margin: -0.4rem 0 0.75rem;
+  max-width: 55ch;
+}
+
+.ayuda--nota {
+  font-size: 0.8rem;
+  color: #fff8dc99;
+  margin: 0.75rem 0 1.75rem;
+}
+
+/* ---------- Ámbitos todavía no disponibles ---------- */
+
+/* No se ocultan: saber que existen y que van a llegar es información útil.
+   Lo que no se puede es elegirlos y terminar en un callejón sin salida. */
+.ambito-option--proximamente {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.ambito-option--proximamente:hover {
+  background: none;
+}
+
+.ambito-proximamente {
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  border: 1px solid #fff8dc4d;
+  border-radius: 999px;
+  padding: 0.1rem 0.45rem;
+  white-space: nowrap;
+}
+
+/* ---------- Acciones del resultado ---------- */
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1.5rem;
+}
+
+.btn-secundario {
+  font-family: var(--font-graduate);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-chiffon);
+  background: none;
+  border: 1px solid #fff8dc4d;
+  border-radius: 3px;
+  padding: 0.6rem 1rem;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.btn-secundario:hover {
+  background: #fff8dc12;
+  border-color: var(--color-chiffon);
+}
+
+.copiar-estado {
+  font-size: 0.8rem;
+  color: #fff8dcb8;
+}
+
+/* ---------- Foco visible ---------- */
+
+/* Sin esto, quien navega con teclado no sabe dónde está parado: el anillo por
+   defecto del navegador casi no se ve sobre este fondo azul oscuro. */
+:focus-visible {
+  outline: 2px solid var(--color-chiffon);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+.ambito-option:has(input:focus-visible) {
+  outline: 2px solid var(--color-chiffon);
+  outline-offset: 3px;
+}
+
+#panel-resultados:focus {
+  outline: none;
+}
+
+/* ---------- Al imprimir o guardar en PDF ---------- */
+
+@media print {
+  /* Tinta oscura sobre papel blanco: el azul de pantalla se imprime ilegible
+     y gasta medio cartucho. */
+  body {
+    background: #fff;
+    color: #111;
+  }
+
+  .site-header,
+  .site-footer,
+  #panel-carga,
+  .acciones,
+  .barra-progreso-wrap {
+    display: none !important;
+  }
+
+  .container {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .panel {
+    background: none;
+    border: 0;
+    padding: 0;
+  }
+
+  .label,
+  .disclaimer,
+  .resumen-total,
+  .resumen-item,
+  .hallazgo-titulo,
+  .hallazgo-desc,
+  .hallazgo-label,
+  .hallazgo-ubicaciones-label,
+  .menores-titulo,
+  .menores-hint,
+  .ejemplo,
+  .hallazgo-ejemplos,
+  .hallazgo-sugerencia,
+  .sin-hallazgos {
+    color: #111;
+  }
+
+  .hallazgo {
+    background: none;
+    border: 1px solid #bbb;
+    border-left-width: 4px;
+    padding: 0.8rem 1rem;
+    margin-bottom: 0.8rem;
+    /* Que una corrección no quede partida entre dos hojas. */
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .hallazgo-ejemplos,
+  .hallazgo-sugerencia {
+    background: #f4f4f4;
+    border: 1px solid #ddd;
+  }
+
+  .ubicacion-chip,
+  .ejemplo-ubicacion {
+    background: #eee;
+    color: #111;
+    border: 1px solid #bbb;
+  }
+
+  .menores {
+    border: 0;
+  }
+
+  .menores-summary {
+    padding-left: 0;
+  }
+
+  .menores-summary::before {
+    display: none;
+  }
+
+  .menores-lista {
+    padding: 0;
+  }
 }
