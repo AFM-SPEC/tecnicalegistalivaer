@@ -407,6 +407,24 @@ body {
   padding-left: 0.9rem;
 }
 
+/* De dónde sale la regla y cuánto obliga. Va al pie y en gris: es la letra
+   chica de la corrección, la que se lee cuando alguien pregunta "¿quién dice?". */
+.hallazgo-fundamento {
+  font-size: var(--texto-xs);
+  color: var(--tinta-tenue);
+  margin-top: 0.9rem;
+}
+
+.exigencia {
+  font-weight: 600;
+}
+
+/* Sólo lo obligatorio se marca. Si todo llevara color, "práctica uniforme"
+   terminaría leyéndose como si fuera la Constitución. */
+.exigencia.obliga {
+  color: var(--color-chiffon-warm);
+}
+
 /* ---------- Ubicación de la corrección ---------- */
 
 /* Antes cada lugar era una pastilla con fondo propio dentro de la tarjeta.
@@ -654,6 +672,8 @@ body {
   .ejemplo-ubicacion,
   .hallazgo-ejemplos,
   .hallazgo-sugerencia,
+  .hallazgo-fundamento,
+  .exigencia,
   .sin-hallazgos,
   .sin-principales {
     color: #111;

@@ -8,6 +8,7 @@
  *   titulo: 'Fórmula de sanción presente',
  *   descripcion: 'Explicación de la regla y por qué importa.',
  *   severidad: 'alta' | 'media' | 'baja',
+ *   autoridad: 'EXIGE' | ... ,   // opcional: sólo las reglas provinciales lo usan
  *   sugerencia: 'Ejemplo concreto de cómo debería quedar el texto.',
  *   ubicacionFija: 'Al inicio, antes del Artículo 1°',  // opcional, ver abajo
  *   check(text, { normalizar, contexto, ordinal }) => { cumple: boolean, ejemplos?: string[] }
@@ -73,6 +74,16 @@ const RuleEngine = (() => {
   }
 
   /**
+   * Entre Ríos mantiene el ordinal también después del 9 ("ARTÍCULO 12°"). La
+   * regla nacional que manda cardinal desde el 10 no rige en la provincia, así
+   * que la herramienta tampoco puede escribirlo así cuando revisa una norma
+   * entrerriana.
+   */
+  function ordinalER(numero) {
+    return `${numero}°`;
+  }
+
+  /**
    * ¿Esta mención a un artículo es una cita y no el encabezado de un artículo?
    *
    * Dentro de un artículo puede decir "conforme al Art. 20 de la Constitución
@@ -98,7 +109,7 @@ const RuleEngine = (() => {
    * vayan en orden creciente: una mención a un número ya pasado tampoco abre un
    * artículo nuevo.
    */
-  function hitos(texto) {
+  function hitos(texto, comoOrdinal = ordinal) {
     const crudos = [];
 
     const reArticulo =
@@ -130,7 +141,7 @@ const RuleEngine = (() => {
       const esEncabezado = h.numero > ultimoNumero || (h.numero === ultimoNumero && h.sufijo);
       if (!esEncabezado) continue;
       ultimoNumero = h.numero;
-      lista.push({ index: h.index, etiqueta: `Artículo ${ordinal(h.numero)}${h.sufijo}` });
+      lista.push({ index: h.index, etiqueta: `Artículo ${comoOrdinal(h.numero)}${h.sufijo}` });
     }
 
     return lista;
@@ -218,14 +229,15 @@ const RuleEngine = (() => {
 
   function analyze(text, ambito) {
     const rules = getRulesFor(ambito);
-    const listaHitos = hitos(text);
+    const comoOrdinal = ambito === "provincial" ? ordinalER : ordinal;
+    const listaHitos = hitos(text, comoOrdinal);
     const hallazgos = [];
 
     for (const rule of rules) {
       let resultado;
       citas = [];
       try {
-        resultado = rule.check(text, { normalizar, contexto, ordinal });
+        resultado = rule.check(text, { normalizar, contexto, ordinal: comoOrdinal });
       } catch (err) {
         resultado = {
           cumple: false,
@@ -257,6 +269,7 @@ const RuleEngine = (() => {
           descripcion: rule.descripcion,
           sugerencia: rule.sugerencia || "",
           fuente: rule.fuente || "",
+          autoridad: rule.autoridad || "",
           severidad: rule.severidad,
           ejemplos,
           ubicaciones,

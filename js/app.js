@@ -111,9 +111,9 @@
 
     if (analisis.totalReglas === 0) {
       listaHallazgosEl.innerHTML = `<div class="sin-hallazgos">
-        Todavía no se puede revisar este tipo de norma. Por ahora la herramienta solo
-        analiza normas de ámbito nacional; los manuales de técnica legislativa de Entre
-        Ríos aún no están cargados.
+        Todavía no se puede revisar este tipo de norma. Están cargadas las reglas
+        nacionales y las provinciales de Entre Ríos; las de ordenanzas municipales
+        todavía no.
       </div>`;
       return;
     }
@@ -203,7 +203,41 @@
                  <div class="hallazgo-sugerencia">${h.sugerencia}</div>`
               : ""
           }
+          ${renderFundamento(h)}
         </article>`;
+  }
+
+  /**
+   * Cuánto obliga cada regla.
+   *
+   * No todas pesan igual, y la herramienta no puede hacerlas pasar por lo
+   * mismo: una práctica uniforme de la Legislatura no es una exigencia
+   * constitucional, y un criterio de estilo tomado de afuera tampoco. La
+   * prioridad dice cuánto urge corregir; esto dice con qué derecho se pide.
+   */
+  const EXIGENCIA = {
+    EXIGE: "Regla obligatoria",
+    "CRITERIO LEGAL CONDICIONADO": "Criterio legal de aplicación condicionada",
+    RECOMIENDA: "Directriz institucional",
+    ACOSTUMBRA: "Práctica uniforme, no obligación",
+    SUBSIDIARIO: "Criterio de estilo, no obligación provincial",
+  };
+
+  /**
+   * Pie de la corrección: cuánto obliga la regla y de dónde sale.
+   *
+   * Por ahora sólo lo llevan las reglas entrerrianas, que son las que declaran
+   * su nivel de exigencia. Las nacionales también guardan la fuente y aparece
+   * en la lista que se copia o se imprime.
+   */
+  function renderFundamento(h) {
+    if (!h.autoridad) return "";
+    const nivel = EXIGENCIA[h.autoridad];
+    const clase = h.autoridad === "EXIGE" ? "exigencia obliga" : "exigencia";
+    const partes = [];
+    if (nivel) partes.push(`<span class="${clase}">${nivel}</span>`);
+    if (h.fuente) partes.push(escapeHtml(h.fuente));
+    return `<p class="hallazgo-fundamento">${partes.join(" · ")}</p>`;
   }
 
   /**
@@ -288,6 +322,7 @@
         lineas.push(`   · ${e.ubicacion ? "[" + e.ubicacion + "] " : ""}${e.texto}`);
       }
       if (h.sugerencia) lineas.push(`   Cómo corregirlo: ${aTextoPlano(h.sugerencia)}`);
+      if (h.autoridad && EXIGENCIA[h.autoridad]) lineas.push(`   Exigencia: ${EXIGENCIA[h.autoridad]}`);
       if (h.fuente) lineas.push(`   Fuente: ${h.fuente}`);
       lineas.push("");
     }
