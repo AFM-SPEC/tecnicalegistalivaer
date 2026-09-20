@@ -227,28 +227,30 @@ window.ReglasNacional = [
         "CAMARA", "CÁMARA", "DIPUTADOS", "BOLETIN", "BOLETÍN", "OFICIAL",
       ]);
 
-      const matches = [...text.matchAll(/\b[A-ZÁÉÍÓÚÑ]{3,}\b/g)];
+      // Una sola recorrida de todas las palabras del documento, anotando al pasar
+      // cuáles vinieron en mayúscula y cuáles en minúscula. Antes se repasaba el
+      // texto entero por cada sigla candidata: en un PDF largo eso tardaba más de
+      // cinco segundos, con la pantalla congelada mientras tanto.
       const primeraAparicion = new Map();
       const conteo = new Map();
-      for (const m of matches) {
+      const vistaEnMinuscula = new Set();
+      for (const m of text.matchAll(/[A-Za-zÁÉÍÓÚÑáéíóúñ]{2,}/g)) {
         const palabra = m[0];
-        if (STOPWORDS.has(palabra)) continue;
+        if (palabra !== palabra.toUpperCase()) {
+          vistaEnMinuscula.add(normalizar(palabra));
+          continue;
+        }
+        if (palabra.length < 3 || STOPWORDS.has(palabra)) continue;
         conteo.set(palabra, (conteo.get(palabra) || 0) + 1);
         if (!primeraAparicion.has(palabra)) primeraAparicion.set(palabra, m.index);
       }
 
-      const repetidas = [...conteo.entries()].filter(([, n]) => n >= 2).map(([s]) => s);
-
-      // Si la palabra también aparece en minúscula en OTRA parte del texto, es una
-      // palabra común en mayúscula (título, énfasis), no una sigla real. Para
-      // comprobarlo hay que sacar primero sus propias apariciones en mayúscula:
-      // si no se sacan, el texto normalizado (todo en minúscula) siempre "se
-      // encuentra a sí mismo" y la sigla nunca se detecta como tal.
-      const posiblesSiglas = repetidas.filter((sigla) => {
-        const sinEstaPalabra = text.replace(new RegExp(`\\b${sigla}\\b`, "g"), " ");
-        const enMinuscula = new RegExp(`\\b${sigla.toLowerCase()}\\b`).test(normalizar(sinEstaPalabra));
-        return !enMinuscula;
-      });
+      // Si la palabra también aparece en minúscula en otra parte del texto, es una
+      // palabra común en mayúscula (título, énfasis), no una sigla real.
+      const posiblesSiglas = [...conteo.entries()]
+        .filter(([, n]) => n >= 2)
+        .map(([sigla]) => sigla)
+        .filter((sigla) => !vistaEnMinuscula.has(normalizar(sigla)));
 
       const sinDefinir = posiblesSiglas.filter((sigla) => !new RegExp(`\\(${sigla}\\)`).test(text));
 
@@ -775,18 +777,22 @@ window.ReglasNacional = [
     fuente: "Manual de Técnica Legislativa, regla 14, punto 1",
     severidad: "alta",
     ubicacionFija: "En el artículo que trate el contenido del Anexo",
-    check(text, { normalizar }) {
-      const t = normalizar(text);
-      const tieneAnexo = /\banexo\b/.test(t);
-      if (!tieneAnexo) return { cumple: true };
-      const primeraAparicion = t.search(/\banexo\b/);
-      const antesDelAnexo = t.slice(0, primeraAparicion);
-      const referenciado = /\banexo\b/.test(antesDelAnexo);
+    check(text) {
+      // Un anexo bien armado se nombra al menos dos veces: en el artículo que
+      // remite a él y en su propio encabezado. Una sola mención significa que
+      // falta una de las dos puntas.
+      //
+      // Antes esto se resolvía buscando la palabra "anexo" en el tramo de texto
+      // anterior a su primera aparición, que por definición no contiene ninguna:
+      // la regla marcaba un problema en toda ley que tuviera un anexo.
+      const menciones = (text.match(/anexo/gi) || []).length;
+      if (menciones === 0 || menciones >= 2) return { cumple: true };
       return {
-        cumple: referenciado,
-        ejemplos: referenciado
-          ? []
-          : ['El documento tiene un "Anexo" pero no se encontró ningún artículo, antes de esa sección, que lo mencione.'],
+        cumple: false,
+        ejemplos: [
+          'El documento nombra un "Anexo" una sola vez: o ningún artículo remite a él, o se lo ' +
+            "menciona pero el anexo no está agregado.",
+        ],
       };
     },
   },
