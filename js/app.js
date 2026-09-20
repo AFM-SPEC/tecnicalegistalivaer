@@ -167,11 +167,13 @@
         "<strong>Reglamento de la Cámara de Diputados</strong> (texto ordenado 2021) y <strong>Reglamento de la Cámara de Senadores</strong> (diciembre de 2023).",
         "<strong>Modelos e instructivos oficiales</strong> de ambas cámaras.",
         "<strong>La práctica medida</strong> sobre 53 leyes entrerrianas sancionadas entre 2025 y 2026, según el Boletín Oficial.",
-        "<strong>Criterios doctrinarios y del Manual nacional</strong>, sólo donde no hay regla entrerriana que cubra el punto.",
+        '<strong>Criterios doctrinarios y del Manual de Técnica Legislativa</strong> — Digesto Jurídico ' +
+          'Argentino, publicado por InfoLeg, publicado en ' +
+          '<a class="enlace-fuente" href="https://www.infoleg.gob.ar/basehome/manualdetecnicalegislativa.html" ' +
+          'target="_blank" rel="noopener">https://www.infoleg.gob.ar/basehome/manualdetecnicalegislativa.html</a>, ' +
+          'sólo donde no hay regla entrerriana que cubra el punto.',
       ],
-      cierre:
-        "Una práctica uniforme puede fundar una recomendación, pero no se convierte por sí sola en " +
-        "obligación jurídica: por eso ninguna corrección basada en la práctica figura como prioridad alta.",
+      cierre: "",
     },
   };
 
@@ -465,7 +467,7 @@
         <div class="fuentes-cuerpo">
           <p>${f.intro}</p>
           <ul class="fuentes-lista">${f.lista.map((x) => `<li>${x}</li>`).join("")}</ul>
-          <p>${f.cierre}</p>
+          ${f.cierre ? `<p>${f.cierre}</p>` : ""}
         </div>
       </details>`;
   }
@@ -539,7 +541,8 @@
       lineas.push("".padEnd(60, "-"), fuentes.titulo.toUpperCase(), "".padEnd(60, "-"), "");
       lineas.push(aTextoPlano(fuentes.intro), "");
       for (const item of fuentes.lista) lineas.push(`· ${aTextoPlano(item)}`);
-      lineas.push("", aTextoPlano(fuentes.cierre), "");
+      if (fuentes.cierre) lineas.push("", aTextoPlano(fuentes.cierre));
+      lineas.push("");
     }
 
     const conteo = { alta: 0, media: 0, baja: 0 };
