@@ -984,6 +984,13 @@ h2.label {
   margin-bottom: 0.5rem;
 }
 
+/* La dirección de la fuente se muestra entera y se puede abrir. En una pantalla
+   angosta una dirección larga desbordaría, así que se le permite cortarse. */
+.enlace-fuente {
+  color: var(--color-chiffon-warm);
+  overflow-wrap: anywhere;
+}
+
 
 /* ---------- Impresión de lo agregado después ---------- */
 
@@ -993,6 +1000,7 @@ h2.label {
   .control-titulo,
   .control-contador,
   .control-grupo,
+  .enlace-fuente,
   .control-enlace,
   .control-lugar,
   .porque-summary,

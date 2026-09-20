@@ -147,7 +147,9 @@
       intro:
         "Las 71 reglas del ámbito nacional se tomaron de los dos textos de referencia en la materia:",
       lista: [
-        "<strong>Manual de Técnica Legislativa</strong> — Digesto Jurídico Argentino, publicado por InfoLeg.",
+        '<strong>Manual de Técnica Legislativa</strong> — Digesto Jurídico Argentino, publicado por ' +
+          'InfoLeg, publicado en <a class="enlace-fuente" href="https://www.infoleg.gob.ar/basehome/manualdetecnicalegislativa.html" ' +
+          'target="_blank" rel="noopener">https://www.infoleg.gob.ar/basehome/manualdetecnicalegislativa.html</a>',
         "<strong>Técnica Legislativa: Marco Teórico</strong> — Grosso, B. M. y Svetaz, M. A.",
       ],
       cierre:
