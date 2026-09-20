@@ -158,9 +158,8 @@
     provincial: {
       titulo: "De dónde salen estas reglas",
       intro:
-        "En Entre Ríos no existe un manual oficial de técnica legislativa. Las 31 reglas se " +
-        "reconstruyeron a partir de fuentes de distinto peso, y por eso cada corrección aclara " +
-        "cuánto obliga:",
+        "Las 31 reglas se reconstruyeron a partir de fuentes de distinto peso, y por eso cada " +
+        "corrección aclara cuánto obliga:",
       lista: [
         "<strong>Constitución de la Provincia de Entre Ríos (2008)</strong> — sobre todo los artículos 130, 131 y 132. Es la única fuente que obliga por sí sola.",
         "<strong>Ley Nº 9.971 del Digesto Jurídico</strong> — sus criterios de redacción se aplican a los proyectos por analogía.",
