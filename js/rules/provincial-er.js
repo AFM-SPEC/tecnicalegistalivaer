@@ -219,7 +219,7 @@ window.ReglasProvincialER = (() => {
     // =========================================================================
     {
       id: "er-prov-001",
-      titulo: "Falta la fórmula de sanción de Entre Ríos",
+      titulo: "Falta la frase con la que la Legislatura sanciona la ley",
       descripcion:
         "Antes del primer artículo, todo proyecto de ley entrerriano debe llevar la fórmula que " +
         "fija la Constitución provincial. No es opcional ni admite otra redacción.",
@@ -244,7 +244,7 @@ window.ReglasProvincialER = (() => {
 
     {
       id: "er-prov-002",
-      titulo: "Se usó la fórmula de sanción nacional",
+      titulo: "La frase de sanción es la del Congreso, no la de Entre Ríos",
       descripcion:
         "El texto lleva la fórmula del Congreso de la Nación. Entre Ríos tiene la suya propia, " +
         "fijada por el artículo 132 de la Constitución provincial. Es el error más frecuente de " +
@@ -264,7 +264,7 @@ window.ReglasProvincialER = (() => {
 
     {
       id: "er-prov-003",
-      titulo: 'La fórmula de sanción dice "sancionan" en lugar de "sanciona"',
+      titulo: 'La frase de sanción dice "sancionan", en plural',
       descripcion:
         "La Legislatura entrerriana sanciona en singular: es un solo cuerpo. El plural " +
         '"sancionan" corresponde al Congreso de la Nación, donde son dos cámaras las que actúan.',
@@ -281,7 +281,7 @@ window.ReglasProvincialER = (() => {
 
     {
       id: "er-prov-004",
-      titulo: "Hay motivos o considerandos dentro del articulado",
+      titulo: "Los artículos explican en vez de mandar",
       descripcion:
         "Los reglamentos de ambas cámaras exigen que el articulado sea de carácter " +
         "<em>rigurosamente preceptivo</em>: la ley manda, no explica. La justificación va en los " +
@@ -309,7 +309,7 @@ window.ReglasProvincialER = (() => {
 
     {
       id: "er-prov-005",
-      titulo: "Los fundamentos están mezclados con el articulado",
+      titulo: "Los fundamentos quedaron partidos en medio de los artículos",
       descripcion:
         "Articulado y fundamentos son dos piezas separadas. En Diputados los fundamentos van " +
         "después del articulado; en el Senado, en hoja aparte encabezando el trámite. Lo que " +
@@ -341,7 +341,7 @@ window.ReglasProvincialER = (() => {
 
     {
       id: "er-prov-006",
-      titulo: "Derogación genérica",
+      titulo: "Se deroga «todo lo que se oponga», sin decir qué",
       descripcion:
         "La derogación debe identificar qué norma se deroga. Una cláusula del tipo " +
         '"deróganse todas las disposiciones que se opongan" no dice nada: traslada al intérprete ' +
@@ -368,7 +368,7 @@ window.ReglasProvincialER = (() => {
 
     {
       id: "er-prov-007",
-      titulo: "Modificación sin el texto nuevo",
+      titulo: "Se modifica otra ley sin escribir cómo queda",
       descripcion:
         "Toda modificación debe ser expresa y textual: hay que transcribir cómo queda redactado " +
         "el artículo. Si no hay texto nuevo, es imposible cumplir el artículo 130 de la " +
@@ -404,7 +404,7 @@ window.ReglasProvincialER = (() => {
 
     {
       id: "er-prov-008",
-      titulo: "Un artículo acumula varias normas",
+      titulo: "Un artículo mete varias decisiones juntas",
       descripcion:
         "El Reglamento del Senado da el mejor test de unidad normativa que existe: el artículo " +
         "debe reducirse a una proposición simple, <em>o tal que no pueda ser admitido en una parte " +
@@ -438,7 +438,7 @@ window.ReglasProvincialER = (() => {
 
     {
       id: "er-prov-009",
-      titulo: "Se citan prescripciones de otra ley sin transcribirlas",
+      titulo: "Se aplican reglas de otra ley sin copiarlas acá",
       descripcion:
         "Regla propia de Entre Ríos y poco conocida: cuando una ley cita o incorpora " +
         "prescripciones de otra, las partes citadas deben insertarse íntegramente en el texto. " +
@@ -637,7 +637,7 @@ window.ReglasProvincialER = (() => {
     // =========================================================================
     {
       id: "er-prov-014",
-      titulo: "Verbo normativo mal conjugado (debería ir en pasiva refleja)",
+      titulo: "El verbo va en la forma equivocada: «créese» en vez de «créase»",
       descripcion:
         '"Declárase" es pasiva refleja: la ley declara y el enunciado se sostiene solo. ' +
         '"Declárese" es un imperativo que le ordena a alguien que declare, pero no dice a quién. ' +
@@ -663,7 +663,7 @@ window.ReglasProvincialER = (() => {
 
     {
       id: "er-prov-015",
-      titulo: "Falta el artículo de forma",
+      titulo: "Falta el artículo final de cierre",
       descripcion:
         "El articulado suele cerrar con un artículo de forma. En las 53 leyes entrerrianas " +
         "sancionadas en 2025-2026 aparece siempre. No es un requisito constitucional: su ausencia " +
@@ -685,7 +685,7 @@ window.ReglasProvincialER = (() => {
 
     {
       id: "er-prov-016",
-      titulo: "El artículo de forma es el de un decreto, no el de una ley",
+      titulo: "El artículo de cierre es el de un decreto, no el de una ley",
       descripcion:
         '"Comuníquese, publíquese y archívese" es la fórmula con que cierran los <em>decretos</em> ' +
         "del Poder Ejecutivo. Las leyes entrerrianas usan otra. Encontrarla en un proyecto de ley " +
@@ -807,7 +807,7 @@ window.ReglasProvincialER = (() => {
 
     {
       id: "er-prov-021",
-      titulo: "Separador de artículo no uniforme",
+      titulo: "Los artículos no se separan siempre igual",
       descripcion:
         'Las 53 leyes medidas usan siempre el mismo separador: punto y guion ("ARTÍCULO 1°.-"). ' +
         "Mezclar separadores en un mismo texto rompe la uniformidad.",
@@ -832,7 +832,7 @@ window.ReglasProvincialER = (() => {
 
     {
       id: "er-prov-022",
-      titulo: "Número de ley citado sin separador de miles",
+      titulo: "Falta el punto de los miles al citar una ley",
       descripcion:
         "Las 13 leyes del corpus que citan otras leyes lo hacen siempre con punto separador de " +
         "miles. Conviene además agregar la materia de la ley citada.",
@@ -899,7 +899,7 @@ window.ReglasProvincialER = (() => {
 
     {
       id: "er-prov-025",
-      titulo: "Incisos marcados con viñetas en lugar de letras o números",
+      titulo: "Los incisos van con guiones y después no se pueden citar",
       descripcion:
         "Los incisos se identifican con letra o número para poder citarlos después " +
         '("el inciso b) del artículo 4º"). Una viñeta o un guion no se pueden citar.',
@@ -922,7 +922,7 @@ window.ReglasProvincialER = (() => {
 
     {
       id: "er-prov-026",
-      titulo: "Divisiones superiores usadas en forma incoherente",
+      titulo: "Los títulos y capítulos no siguen un orden claro",
       descripcion:
         "Las divisiones van en orden: Libro, Título, Capítulo, Sección. Saltar un nivel, o abrir " +
         "una división única (un solo capítulo en toda la ley), confunde más de lo que ordena.",
@@ -959,7 +959,7 @@ window.ReglasProvincialER = (() => {
 
     {
       id: "er-prov-027",
-      titulo: 'Uso de la fórmula "y/o"',
+      titulo: 'Se usa "y/o", que deja la duda de si son los dos o uno solo',
       descripcion:
         '"Y/o" es ambigua: no queda claro si exige ambos, uno cualquiera o los dos. Como la ' +
         "corrección tiene que mantener exactamente la relación lógica buscada, conviene decidirla " +
@@ -1056,7 +1056,7 @@ window.ReglasProvincialER = (() => {
 
     {
       id: "er-prov-031",
-      titulo: "Sigla escrita con puntos intermedios o con plural",
+      titulo: "Siglas con puntos en el medio o con «s» de plural",
       descripcion: "Las siglas se escriben sin puntos y sin marca de plural.",
       sugerencia: 'Escribir "las ONG", no "las O.N.G.s".',
       autoridad: "SUBSIDIARIO",

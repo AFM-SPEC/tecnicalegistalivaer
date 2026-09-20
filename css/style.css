@@ -53,7 +53,17 @@ body {
   text-transform: uppercase;
   color: var(--tinta-tenue);
   font-size: var(--texto-xs);
+  font-weight: 400;
   margin: 0 0 0.9rem;
+}
+
+/* Los rótulos de sección y los títulos de cada corrección son encabezados de
+   verdad (h2 y h3), para que un lector de pantalla pueda saltar de uno a otro.
+   Eso trae el tamaño y el margen que el navegador le pone a los encabezados,
+   así que se anulan acá: en pantalla tienen que verse igual que antes. */
+h2.label {
+  font-size: var(--texto-xs);
+  margin: 2rem 0 0.9rem;
 }
 
 /* ---------- Header ---------- */
@@ -281,6 +291,32 @@ body {
   text-align: right;
 }
 
+/* ---------- Formulario plegado ---------- */
+
+/* Cuando ya hay resultado, el formulario entero se reemplaza por esta línea:
+   ocupaba pantalla y media arriba de lo único que se viene a leer. */
+.carga-resumen {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.carga-resumen-texto {
+  font-size: var(--texto-sm);
+  color: var(--tinta);
+  margin: 0;
+}
+
+.carga-resumen-ambito {
+  color: var(--tinta-tenue);
+}
+
+.carga-resumen-ambito::before {
+  content: " · ";
+}
+
 /* ---------- Resultados ---------- */
 
 .disclaimer {
@@ -373,6 +409,7 @@ body {
 
 .hallazgo-titulo {
   font-size: var(--texto-lg);
+  font-family: var(--font-body);
   font-weight: 600;
   line-height: 1.35;
   margin-bottom: 0.5rem;
@@ -592,7 +629,9 @@ body {
   background: none;
   border: 1px solid var(--linea);
   border-radius: 3px;
-  padding: 0.55rem 1rem;
+  /* 44px de alto: por debajo de eso, en un teléfono se falla el toque. */
+  min-height: 44px;
+  padding: 0.55rem 1.1rem;
   cursor: pointer;
   transition: background 0.2s, border-color 0.2s;
 }
@@ -679,6 +718,14 @@ body {
     color: #111;
   }
 
+  /* Sobre papel, el crema de "Regla obligatoria" desaparece: es casi blanco
+     sobre blanco. Lleva su propia regla porque una sola clase no alcanza para
+     ganarle a .exigencia.obliga, que es la que le pone el color en pantalla. */
+  .exigencia.obliga {
+    color: #111;
+    text-decoration: underline;
+  }
+
   /* En papel se mantiene la misma idea que en pantalla: una línea al costado
      en lugar de recuadros. La línea conserva el color de prioridad, que sí se
      imprime por ser un borde y no un fondo. */
@@ -725,5 +772,279 @@ body {
 
   .menores-lista {
     padding: 0;
+  }
+}
+
+
+/* ---------- Lista de control ---------- */
+
+/* Lo primero del resultado: una línea por corrección, con el lugar del
+   documento. Sin esto hay que leer doce minutos para saber qué hay que hacer. */
+.control-titulo {
+  font-family: var(--font-body);
+  font-size: var(--texto-lg);
+  font-weight: 600;
+  color: var(--tinta);
+  margin: 2.25rem 0 0.35rem;
+}
+
+.control-contador {
+  font-size: var(--texto-sm);
+  color: var(--tinta-tenue);
+  margin: 0 0 1rem;
+}
+
+.control-grupo {
+  font-size: var(--texto-xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--tinta-tenue);
+  margin: 1.4rem 0 0.4rem;
+}
+
+.control-grupo.alta { color: var(--alta); }
+.control-grupo.media { color: var(--media); }
+.control-grupo.baja { color: var(--baja); }
+
+.control-lista {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+  border-top: 1px solid var(--linea-suave);
+}
+
+.control-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.7rem 0.4rem;
+  border-bottom: 1px solid var(--linea-suave);
+  border-left: 2px solid transparent;
+}
+
+.control-item.alta { border-left-color: var(--alta); }
+.control-item.media { border-left-color: var(--media); }
+.control-item.baja { border-left-color: var(--baja); }
+
+.control-item:hover {
+  background: var(--realce);
+}
+
+/* La casilla mide 20px, pero el dedo necesita 44. El área de toque se agranda
+   con el relleno de la etiqueta que la envuelve, sin mover nada de sitio. */
+.control-marcar {
+  display: flex;
+  align-items: flex-start;
+  padding: 0.75rem;
+  margin: -0.65rem 0 -0.75rem -0.75rem;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.control-check {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  accent-color: var(--color-chiffon);
+  cursor: pointer;
+}
+
+/* El texto que nombra la casilla existe para quien usa lector de pantalla;
+   en la pantalla lo dice la propia línea. */
+.control-check-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.control-enlace {
+  color: var(--tinta);
+  text-decoration: none;
+  font-size: var(--texto-sm);
+  line-height: 1.5;
+  /* Con el relleno, la línea entera llega a los 44px de alto que hacen falta
+     para tocarla sin errarle en un teléfono. */
+  display: block;
+  padding: 0.2rem 0;
+}
+
+.control-enlace:hover .control-texto {
+  text-decoration: underline;
+}
+
+.control-lugar {
+  color: var(--color-chiffon-warm);
+  margin-right: 0.4rem;
+}
+
+.control-lugar::after {
+  content: " —";
+}
+
+/* Marcado como resuelto: se apaga, pero no desaparece. */
+.control-item.resuelta .control-enlace,
+.control-item.resuelta .control-lugar {
+  color: var(--tinta-tenue);
+  text-decoration: line-through;
+}
+
+.hallazgo.resuelta {
+  opacity: 0.45;
+}
+
+.hallazgo.resuelta .hallazgo-titulo {
+  text-decoration: line-through;
+}
+
+/* ---------- "Por qué importa", dentro de cada corrección ---------- */
+
+/* La explicación va plegada y después del arreglo: quien viene a corregir
+   necesita la acción; el porqué lo abre quien quiera entender la regla. */
+.porque {
+  margin-top: 1rem;
+}
+
+.porque-summary {
+  cursor: pointer;
+  list-style: none;
+  font-size: var(--texto-sm);
+  font-weight: 600;
+  color: var(--tinta-tenue);
+  /* Alto cómodo para el dedo: es el desplegable que más se va a abrir. */
+  padding: 0.7rem 0;
+}
+
+.porque-summary::-webkit-details-marker {
+  display: none;
+}
+
+.porque-summary::before {
+  content: "▸";
+  display: inline-block;
+  margin-right: 0.45rem;
+  transition: transform 0.15s ease;
+}
+
+.porque[open] > .porque-summary::before {
+  transform: rotate(90deg);
+}
+
+.porque .hallazgo-desc {
+  margin-top: 0.5rem;
+  border-left: 1px solid var(--linea-suave);
+  padding-left: 0.9rem;
+}
+
+/* ---------- De dónde salen las reglas ---------- */
+
+.fuentes {
+  border-top: 1px solid var(--linea);
+  margin-top: 2.5rem;
+}
+
+.fuentes-summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 1.1rem 0;
+  font-size: var(--texto-sm);
+  font-weight: 600;
+  color: var(--tinta-media);
+}
+
+.fuentes-summary::-webkit-details-marker {
+  display: none;
+}
+
+.fuentes-summary::before {
+  content: "▸";
+  display: inline-block;
+  margin-right: 0.45rem;
+  transition: transform 0.15s ease;
+}
+
+.fuentes[open] > .fuentes-summary::before {
+  transform: rotate(90deg);
+}
+
+.fuentes-cuerpo {
+  font-size: var(--texto-sm);
+  color: var(--tinta-tenue);
+  padding-bottom: 1.5rem;
+}
+
+.fuentes-lista {
+  margin: 0.9rem 0;
+  padding-left: 1.1rem;
+}
+
+.fuentes-lista li {
+  margin-bottom: 0.5rem;
+}
+
+
+/* ---------- Impresión de lo agregado después ---------- */
+
+/* Este bloque va al final a propósito: las reglas de papel tienen que ganarle
+   a las de pantalla que están más arriba, y en hojas de estilo gana la última. */
+@media print {
+  .control-titulo,
+  .control-contador,
+  .control-grupo,
+  .control-enlace,
+  .control-lugar,
+  .porque-summary,
+  .fuentes-summary,
+  .fuentes-cuerpo,
+  .carga-resumen-texto {
+    color: #111;
+  }
+
+  .control-lista,
+  .control-item {
+    border-color: #ccc;
+  }
+
+  .control-item:hover {
+    background: none;
+  }
+
+  /* Una corrección marcada como resuelta se imprime entera y legible: en papel
+     no se puede volver a marcarla, así que atenuarla sólo la haría ilegible. */
+  .hallazgo.resuelta {
+    opacity: 1;
+  }
+
+  /* Que nada quede plegado en el papel. El navegador abre los desplegables al
+     imprimir, pero no todos avisan a tiempo: si falla, el PDF saldría con una
+     de cada cinco correcciones y nadie se enteraría. */
+  details > summary {
+    display: block;
+  }
+
+  details > *:not(summary) {
+    display: block !important;
+    height: auto !important;
+    overflow: visible !important;
+    content-visibility: visible !important;
+  }
+
+  .porque-summary::before,
+  .fuentes-summary::before,
+  .menores-summary::before {
+    content: "";
+  }
+
+  /* La lista de control es lo que se lleva a la mano para ir tachando. */
+  .control-item {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .fuentes {
+    border-top-color: #ccc;
+    break-before: page;
   }
 }
