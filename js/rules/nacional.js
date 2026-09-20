@@ -85,7 +85,7 @@ window.ReglasNacional = [
       'Agregar como último artículo algo como: "Artículo 10.- Comuníquese al Poder Ejecutivo." ' +
       'También es válido titular ese último artículo "De forma" seguido de la fórmula que corresponda.',
     fuente: 'Manual de Técnica Legislativa, regla 17.1.c — "artículo de forma"',
-    severidad: "media",
+    severidad: "alta",
     ubicacionFija: "Al final, después del último artículo",
     check(text, { normalizar, contexto }) {
       const t = normalizar(text);
@@ -108,7 +108,7 @@ window.ReglasNacional = [
       '"Artículo" completo en otra.',
     sugerencia: 'Usar siempre la palabra completa en todo el documento: "Artículo 5°", nunca "Art. 5°".',
     fuente: "Manual de Técnica Legislativa, regla 9, punto 4",
-    severidad: "baja",
+    severidad: "alta",
     check(text, { contexto }) {
       const abreviado = [...text.matchAll(/\bart\.\s*\d/gi)];
       const completo = [...text.matchAll(/art[íi]culo\s+\d/gi)];
@@ -134,7 +134,7 @@ window.ReglasNacional = [
       "Dividir el artículo en dos o más artículos cortos, cada uno con una sola idea (por ejemplo, " +
       "uno para la definición, otro para la obligación, otro para la sanción).",
     fuente: "Manual de Técnica Legislativa, regla 9, puntos 2 y 3",
-    severidad: "media",
+    severidad: "alta",
     check(text) {
       const bloques = text
         .split(/(?=art[íi]culo\s+\d+\s*(?:bis|ter|quater)?\b|anexo\b)/gi)
@@ -164,7 +164,7 @@ window.ReglasNacional = [
       'vigencia a partir de su publicación en el Boletín Oficial" (o la fecha/condición que corresponda). ' +
       "Si el plazo general sí es lo que se quiere, se puede dejar así sin problema.",
     fuente: "Código Civil y Comercial de la Nación, art. 5°",
-    severidad: "baja",
+    severidad: "alta",
     ubicacionFija: "Al final, junto a las disposiciones finales",
     check(text, { normalizar, contexto }) {
       const t = normalizar(text);
@@ -188,7 +188,7 @@ window.ReglasNacional = [
       "número exacto qué parte de esa ley anterior queda derogada. No alcanza con darlo por sobreentendido.",
     sugerencia: 'Agregar algo como: "Derógase el artículo 8° de la Ley N° 12.345."',
     fuente: "Manual de Técnica Legislativa, reglas 54.4, 57.1 y 57.3",
-    severidad: "media",
+    severidad: "alta",
     check(text, { normalizar, contexto }) {
       const t = normalizar(text);
       const modificaMatch = t.match(/modific|sustituy|reemplaz/);
@@ -218,7 +218,7 @@ window.ReglasNacional = [
       'Ejemplo correcto: la primera vez escribir "el Registro Nacional de Ejemplo (RNE)", y luego, ' +
       'en el resto del texto, usar directamente "el RNE".',
     fuente: "Manual de Técnica Legislativa, regla 36, punto 2",
-    severidad: "baja",
+    severidad: "media",
     check(text, { normalizar, contexto }) {
       const STOPWORDS = new Set([
         "LEY", "ARTICULO", "ARTÍCULO", "TITULO", "TÍTULO", "CAPITULO", "CAPÍTULO",
@@ -289,7 +289,7 @@ window.ReglasNacional = [
       'En vez de "deróganse todas las disposiciones que se opongan a la presente", escribir por ' +
       'ejemplo: "Derógense los artículos 5° y 8° de la Ley N° 12.345."',
     fuente: "Manual de Técnica Legislativa, reglas 57.1 y 57.3",
-    severidad: "media",
+    severidad: "alta",
     check(text, { normalizar, contexto }) {
       const t = normalizar(text);
       const match =
@@ -314,7 +314,7 @@ window.ReglasNacional = [
       'En vez de "no podrán oponerse sin autorización", escribir "necesitan autorización para ' +
       'oponerse" (una sola negación).',
     fuente: "Manual de Técnica Legislativa, regla 23, punto 1",
-    severidad: "baja",
+    severidad: "alta",
     check(text) {
       const oraciones = text.split(/(?<=[.;])\s+/);
       const problemas = [];
@@ -335,7 +335,7 @@ window.ReglasNacional = [
       'Conviene usar "o" (que ya incluye la posibilidad de ambas) o explicarlo directamente.',
     sugerencia: 'Reemplazar "los bienes y/o servicios" por "los bienes o servicios".',
     fuente: "Manual de Técnica Legislativa, regla 25, punto 1",
-    severidad: "baja",
+    severidad: "alta",
     check(text, { contexto }) {
       const ocurrencias = [...text.matchAll(/\by\/o\b/gi)];
       return {
@@ -353,7 +353,7 @@ window.ReglasNacional = [
       "sobre a qué año se refieren.",
     sugerencia: 'Escribir "12/6/1987" en vez de "12/6/87".',
     fuente: "Manual de Técnica Legislativa, regla 40, punto 1",
-    severidad: "baja",
+    severidad: "media",
     check(text) {
       const fechasCortas = text.match(/\b\d{1,2}\/\d{1,2}\/\d{2}\b(?!\d)/g) || [];
       return {
@@ -371,7 +371,7 @@ window.ReglasNacional = [
       "justo después del número, que resuma de qué trata. Esto ayuda a encontrar rápido cada tema.",
     sugerencia: 'Ejemplo correcto (el epígrafe va en cursiva): "Artículo 3° -<em>Vigencia</em>- Esta ley entra en vigencia..."',
     fuente: "Manual de Técnica Legislativa, regla 9, punto 5",
-    severidad: "baja",
+    severidad: "alta",
     check(text, { contexto }) {
       const articulos = [...text.matchAll(/art[íi]culo\s+\d+[°ºo]?/gi)];
       if (articulos.length === 0) return { cumple: true };
@@ -401,7 +401,7 @@ window.ReglasNacional = [
       "real del contenido de la ley.",
     sugerencia: 'En vez de "Ley 25.089", escribir algo como "Ley de Creación del Registro Nacional de Ejemplo".',
     fuente: "Manual de Técnica Legislativa, regla 3, punto 2",
-    severidad: "baja",
+    severidad: "media",
     ubicacionFija: "En el título de la norma",
     check(text) {
       const primerArticulo = text.search(/art[íi]culo\s+1[°ºo]?\b/i);
@@ -429,7 +429,7 @@ window.ReglasNacional = [
       "decirlo y nombrar esa ley. Así, quien lee el título ya sabe de qué se trata sin tener que leer todo.",
     sugerencia: 'En vez de un título genérico, escribir algo como: "Ley N° 25.087. Modificación de la Ley N° 20.429."',
     fuente: "Manual de Técnica Legislativa, regla 6, punto 1",
-    severidad: "baja",
+    severidad: "media",
     ubicacionFija: "En el título de la norma",
     check(text, { normalizar }) {
       const primerArticulo = text.search(/art[íi]culo\s+1[°ºo]?\b/i);
@@ -479,7 +479,7 @@ window.ReglasNacional = [
     descripcion: "El título de la norma debería ser breve — una frase corta, no un párrafo.",
     sugerencia: 'Acortar el título a una frase breve, por ejemplo: "Ley de Creación del Registro Nacional de Ejemplo".',
     fuente: "Manual de Técnica Legislativa, regla 3, punto 1",
-    severidad: "baja",
+    severidad: "media",
     ubicacionFija: "En el título de la norma",
     check(text) {
       const primerArticulo = text.search(/art[íi]culo\s+1[°ºo]?\b/i);
@@ -505,7 +505,7 @@ window.ReglasNacional = [
       "necesitan un subtítulo corto que diga de qué tratan, igual que los artículos.",
     sugerencia: 'Ejemplo correcto: "CAPÍTULO I — Disposiciones generales"',
     fuente: "Manual de Técnica Legislativa, regla 8, punto 4",
-    severidad: "baja",
+    severidad: "media",
     check(text, { contexto }) {
       const divisiones = [...text.matchAll(/\b(cap[íi]tulo|t[íi]tulo|secci[óo]n)\s+([ivxlcdm]+|\d+|[a-z]\b)/gi)];
       if (divisiones.length === 0) return { cumple: true };
@@ -534,7 +534,7 @@ window.ReglasNacional = [
       'letras seguidas de paréntesis, como "a)", "b)", "c)".',
     sugerencia: 'En vez de listar con guiones, escribir: "a) primer punto; b) segundo punto; c) tercer punto."',
     fuente: "Manual de Técnica Legislativa, regla 11, punto 3",
-    severidad: "baja",
+    severidad: "media",
     check(text, { contexto }) {
       const vinetas = [...text.matchAll(/\n\s*-\s+[a-záéíóúñ]/g)];
       return {
@@ -555,7 +555,7 @@ window.ReglasNacional = [
       "Sacar esas frases del articulado. Si son la motivación del proyecto, van en los fundamentos, " +
       "no en los artículos.",
     fuente: "Manual de Técnica Legislativa, regla 28, punto 1",
-    severidad: "media",
+    severidad: "alta",
     check(text, { normalizar, contexto }) {
       const t = normalizar(text);
       const patrones = [
@@ -589,7 +589,7 @@ window.ReglasNacional = [
     sugerencia:
       'En vez de "...y el mismo deberá presentarse...", repetir el término: "...y el Registro deberá presentarse..."',
     fuente: "Manual de Técnica Legislativa, regla 34, punto 1",
-    severidad: "baja",
+    severidad: "media",
     check(text, { contexto }) {
       const patron = /\b(el mismo|la misma|los mismos|las mismas|éste|ésta|dicho|dicha)\b/gi;
       const encontrados = [...text.matchAll(patron)];
@@ -608,7 +608,7 @@ window.ReglasNacional = [
       "español. Si hace falta usarla, conviene definirla la primera vez.",
     sugerencia: 'Agregar una aclaración la primera vez que aparece, por ejemplo: "...el sitio web (\'landing page\')..."',
     fuente: "Manual de Técnica Legislativa, regla 33, punto 1",
-    severidad: "baja",
+    severidad: "media",
     check(text, { normalizar, contexto }) {
       const t = normalizar(text);
       const palabras = [
@@ -635,7 +635,7 @@ window.ReglasNacional = [
       'tablas), por ejemplo "treinta (30) días" en vez de solamente "30 días".',
     sugerencia: 'Escribir "treinta (30) días" en vez de "30 días".',
     fuente: "Manual de Técnica Legislativa, regla 39, punto 1",
-    severidad: "baja",
+    severidad: "media",
     check(text, { contexto }) {
       const unidades = "d[íi]as?|a[ñn]os?|meses|semanas|horas|minutos|pesos|kil[óo]metros|metros";
       const patron = new RegExp(`(?<!\\()\\b(\\d+)\\s+(?=(${unidades})\\b)`, "gi");
@@ -655,7 +655,7 @@ window.ReglasNacional = [
       "evitarse los puntos suspensivos.",
     sugerencia: "Transcribir la cita completa, o cortarla de otra forma que no use puntos suspensivos.",
     fuente: "Manual de Técnica Legislativa, regla 41.d",
-    severidad: "baja",
+    severidad: "media",
     check(text, { contexto }) {
       const encontrados = [...text.matchAll(/"[^"]{0,200}\.\.\.[^"]{0,200}"/g)];
       return {
@@ -673,7 +673,7 @@ window.ReglasNacional = [
       "más difícil de entender y de aplicar correctamente.",
     sugerencia: "Cortar la frase en dos o más oraciones más cortas, cada una con una sola idea.",
     fuente: "Manual de Técnica Legislativa, regla 18, punto 1",
-    severidad: "baja",
+    severidad: "media",
     check(text) {
       const frases = text.split(/(?<=[.;])\s+/);
       const largas = [];
@@ -696,7 +696,7 @@ window.ReglasNacional = [
       "transitorias aparecen antes de la mayoría de los artículos, el orden general está invertido.",
     sugerencia: "Mover el artículo o sección de disposiciones transitorias hacia el final del texto, después de las demás.",
     fuente: "Marco Teórico de Técnica Legislativa — orden temático de las disposiciones (punto A.1)",
-    severidad: "baja",
+    severidad: "alta",
     check(text, { normalizar, contexto }) {
       const t = normalizar(text);
       const m = t.match(/disposici(o|ó)n(es)? transitoria/);
@@ -720,7 +720,7 @@ window.ReglasNacional = [
       "paréntesis dónde y cuándo se publicó (Boletín Oficial), para poder verificarla.",
     sugerencia: 'Agregar la referencia completa la primera vez: "Ley N° 24.240 (B.O. 15/10/93)".',
     fuente: "Manual de Técnica Legislativa, regla 45, punto 2",
-    severidad: "baja",
+    severidad: "alta",
     check(text, { contexto }) {
       // Solo se consideran citas a OTRAS leyes: las que aparecen en el articulado.
       // El número de la propia norma, en el encabezado, no es una cita externa.
@@ -749,8 +749,8 @@ window.ReglasNacional = [
       'Frases como "sin perjuicio de lo cual" o "en lo que respecta a" repetidas muchas veces ' +
       "alargan el texto sin necesidad. Conviene ir directo a la disposición.",
     sugerencia: "Reformular la frase de manera más directa, sacando la muletilla.",
-    fuente: "Manual de Técnica Legislativa, regla 18 (brevedad) y regla 19 (estilo)",
-    severidad: "baja",
+    fuente: "Manual de Técnica Legislativa, regla 18, punto 1 (brevedad)",
+    severidad: "media",
     check(text, { normalizar, contexto }) {
       const t = normalizar(text);
       const patrones = [/sin perjuicio de lo cual/g, /en lo que respecta a/g, /a los efectos de lo dispuesto/g];
@@ -773,7 +773,7 @@ window.ReglasNacional = [
       "expresamente (por ejemplo, \"...que como Anexo I forma parte de la presente\").",
     sugerencia: 'Agregar en el artículo correspondiente algo como: "...cuyo detalle consta en el Anexo I de la presente ley."',
     fuente: "Manual de Técnica Legislativa, regla 14, punto 1",
-    severidad: "baja",
+    severidad: "alta",
     ubicacionFija: "En el artículo que trate el contenido del Anexo",
     check(text, { normalizar }) {
       const t = normalizar(text);
@@ -801,7 +801,7 @@ window.ReglasNacional = [
       'En vez de terminar la lista con "etc.", aclarar expresamente: "..., entre otros" (si es de ' +
       'ejemplo) o simplemente no usar "etc." si la lista es cerrada.',
     fuente: "Manual de Técnica Legislativa, regla 27, punto 1",
-    severidad: "baja",
+    severidad: "alta",
     check(text, { contexto }) {
       const encontrados = [...text.matchAll(/,?\s*etc\.?\b/gi)];
       return {
@@ -820,7 +820,7 @@ window.ReglasNacional = [
       "de tener sentido.",
     sugerencia: 'En vez de "conforme al último inciso del artículo 5°", escribir "conforme al inciso 4° del artículo 5°".',
     fuente: "Manual de Técnica Legislativa, regla 46, punto 1",
-    severidad: "baja",
+    severidad: "alta",
     check(text, { normalizar, contexto }) {
       const t = normalizar(text);
       const encontrados = [...t.matchAll(/\b(ultimo|penultimo|ultimos? dos)\s+incisos?\b/g)];
@@ -839,7 +839,7 @@ window.ReglasNacional = [
       'modificaciones (al menos la primera vez), en vez de solamente decir "y sus modificatorias".',
     sugerencia: 'En vez de "la Ley 24.240 y sus modificatorias", escribir "la Ley 24.240, modificada por las Leyes 26.361 y 26.993".',
     fuente: "Manual de Técnica Legislativa, regla 52, punto 1",
-    severidad: "baja",
+    severidad: "alta",
     check(text, { normalizar, contexto }) {
       const t = normalizar(text);
       const encontrados = [...t.matchAll(/y\s+sus\s+modificatorias/g)];
@@ -858,7 +858,7 @@ window.ReglasNacional = [
       'confundir— decir además que lo "deroga". Sustituir ya implica que el texto anterior deja de regir.',
     sugerencia: 'Usar solamente "sustitúyese": "Sustitúyese el artículo 5° de la Ley X por el siguiente: ..." sin agregar "derógase" para lo mismo.',
     fuente: "Manual de Técnica Legislativa, regla 63, punto 1",
-    severidad: "baja",
+    severidad: "alta",
     check(text, { normalizar, contexto }) {
       const t = normalizar(text);
       const m =
@@ -876,7 +876,7 @@ window.ReglasNacional = [
       'artículo o la ley), no referirse de manera genérica a "los plazos vigentes" o "las normas actuales".',
     sugerencia: 'En vez de "Prorróganse los plazos vigentes", escribir "Prorrógase el plazo establecido en el artículo 3° de la Ley N° 12.345".',
     fuente: "Manual de Técnica Legislativa, regla 68, punto 4",
-    severidad: "baja",
+    severidad: "alta",
     check(text, { normalizar, contexto }) {
       const t = normalizar(text);
       const matches = [...t.matchAll(/\b(prorroga|suspende)(se|nse)?\b/g)];
@@ -898,9 +898,9 @@ window.ReglasNacional = [
     descripcion:
       'Cada anexo debe llevar, además de su identificación ("Anexo I"), un título corto que informe ' +
       "de qué trata, para que se sepa qué hay adentro sin tener que leerlo entero.",
-    sugerencia: 'Ejemplo correcto: "ANEXO I — Listado de actividades comprendidas (artículo 5°)".',
+    sugerencia: 'Ejemplo correcto: "ANEXO A — Listado de actividades comprendidas (artículo 5°)".',
     fuente: "Manual de Técnica Legislativa, regla 13, punto 1",
-    severidad: "baja",
+    severidad: "media",
     check(text, { contexto }) {
       const anexos = [...text.matchAll(/\banexo\s+([ivxlcdm]+|[a-z]|\d+)\b/gi)];
       if (anexos.length === 0) return { cumple: true };
@@ -924,7 +924,7 @@ window.ReglasNacional = [
       'abreviaturas aceptadas para citar normas (como "Art." o "B.O."). En el texto de la norma va la palabra entera.',
     sugerencia: 'Escribir "Número", "Departamento", "General", "con" en vez de "Nro.", "Depto.", "Gral.", "c/".',
     fuente: "Manual de Técnica Legislativa, regla 36, punto 1",
-    severidad: "baja",
+    severidad: "media",
     check(text, { contexto }) {
       const patron = /\b(nro\.|depto\.|pcia\.|gral\.|tel\.|ej\.)|(\s[cs]\/\s)/gi;
       const encontrados = [...text.matchAll(patron)];
@@ -945,7 +945,7 @@ window.ReglasNacional = [
       'Ejemplo correcto: Sustitúyese el artículo 5° de la Ley N° 12.345 por el siguiente: "Artículo 5°: ' +
       'El registro funcionará en el ámbito del Ministerio."',
     fuente: "Manual de Técnica Legislativa, regla 41.c",
-    severidad: "media",
+    severidad: "alta",
     check(text, { normalizar, contexto }) {
       const t = normalizar(text);
       const introducciones = [...t.matchAll(/por el siguiente|quedar[aá] redactado (de la siguiente manera|as[ií])/g)];
@@ -970,7 +970,7 @@ window.ReglasNacional = [
       "sugerencia de estilo — puede haber usos del futuro que sean correctos, como la cláusula de vigencia.",
     sugerencia: 'En vez de "La autoridad de aplicación establecerá los requisitos", escribir "La autoridad de aplicación establece los requisitos".',
     fuente: "Manual de Técnica Legislativa, regla 20, punto 1",
-    severidad: "baja",
+    severidad: "media",
     check(text, { normalizar, contexto }) {
       const t = normalizar(text);
       // Verbos en futuro simple (3ª persona), excluyendo los usos habitualmente válidos
@@ -1001,7 +1001,7 @@ window.ReglasNacional = [
       '"Ordenanza" o "Proyecto de ley". Si no lo dice, no queda claro qué se está leyendo.',
     sugerencia: 'Encabezar el documento con su denominación, por ejemplo: "PROYECTO DE LEY" o "LEY N° 12.345".',
     fuente: "Manual de Técnica Legislativa, regla 1, punto 1.a",
-    severidad: "media",
+    severidad: "alta",
     ubicacionFija: "En el encabezado, antes del título",
     check(text, { normalizar }) {
       const inicio = normalizar(text.slice(0, 300));
@@ -1023,7 +1023,7 @@ window.ReglasNacional = [
       "lo mismo. Si el título habla de algo que después el texto nombra de otra forma, confunde.",
     sugerencia: 'Si el título dice "Registro Nacional de Ejemplo", los artículos deben llamarlo igual, no "el padrón" o "la base de datos".',
     fuente: "Manual de Técnica Legislativa, regla 4, punto 1",
-    severidad: "baja",
+    severidad: "media",
     ubicacionFija: "En el título de la norma",
     check(text, { normalizar }) {
       const primerArticulo = text.search(/art[íi]culo\s+1[°ºo]?\b/i);
@@ -1056,7 +1056,7 @@ window.ReglasNacional = [
       '"Sección" pero no tiene ningún "Capítulo", la estructura está mal armada.',
     sugerencia: 'Agrupar las secciones dentro de un capítulo, o renombrarlas directamente como "Capítulo".',
     fuente: "Manual de Técnica Legislativa, regla 8, punto 3",
-    severidad: "baja",
+    severidad: "media",
     check(text, { normalizar, contexto }) {
       const t = normalizar(text);
       const m = t.match(/\bseccion\s+([ivxlcdm]+|\d+|[a-z]\b)/);
@@ -1077,7 +1077,7 @@ window.ReglasNacional = [
       "comunes (1, 2, 3).",
     sugerencia: 'Escribir "TÍTULO II" en vez de "TÍTULO 2".',
     fuente: "Manual de Técnica Legislativa, regla 8, punto 5",
-    severidad: "baja",
+    severidad: "media",
     check(text, { contexto }) {
       const encontrados = [...text.matchAll(/\bt[íi]tulo\s+\d+\b/gi)];
       return {
@@ -1095,7 +1095,7 @@ window.ReglasNacional = [
       "quiénes o a qué situaciones se aplica. Si no está, el lector tiene que deducirlo.",
     sugerencia: 'Agregar como primer artículo algo como: "Artículo 1° -Objeto- La presente ley tiene por objeto regular..."',
     fuente: "Manual de Técnica Legislativa, regla 17, punto 1.a — Marco Teórico, disposiciones preliminares",
-    severidad: "baja",
+    severidad: "alta",
     ubicacionFija: "En el Artículo 1°",
     check(text, { normalizar }) {
       const cantidadArticulos = (text.match(/art[íi]culo\s+\d+/gi) || []).length;
@@ -1145,7 +1145,7 @@ window.ReglasNacional = [
       "no con símbolos o abreviaturas. Los símbolos se reservan para tablas y listados.",
     sugerencia: 'Escribir "cincuenta (50) kilómetros" en vez de "50 km", y "pesos cincuenta mil ($ 50.000)" indicando la moneda completa.',
     fuente: "Manual de Técnica Legislativa, regla 42, punto 1",
-    severidad: "baja",
+    severidad: "media",
     check(text, { contexto }) {
       const encontrados = [...text.matchAll(/\b\d+\s*(km|kg|mts?|lts?|hs|m2|m3)\b/gi)];
       return {
@@ -1164,7 +1164,7 @@ window.ReglasNacional = [
       "referencia queda apuntando a otro lado.",
     sugerencia: 'En vez de "lo dispuesto en el artículo anterior", escribir "lo dispuesto en el artículo 3°".',
     fuente: "Manual de Técnica Legislativa, regla 45, punto 8",
-    severidad: "media",
+    severidad: "alta",
     check(text, { normalizar, contexto }) {
       const t = normalizar(text);
       const encontrados = [
@@ -1185,7 +1185,7 @@ window.ReglasNacional = [
       "nombrarlo, para que se identifique sin leer el articulado.",
     sugerencia: 'Titular la norma, por ejemplo: "Aprobación del Tratado de Asunción para la constitución del MERCOSUR".',
     fuente: "Manual de Técnica Legislativa, regla 5, punto 1",
-    severidad: "baja",
+    severidad: "media",
     ubicacionFija: "En el título de la norma",
     check(text, { normalizar }) {
       const primerArticulo = text.search(/art[íi]culo\s+1[°ºo]?\b/i);
@@ -1212,7 +1212,7 @@ window.ReglasNacional = [
       "termina con dos puntos, y recién ahí va el texto nuevo.",
     sugerencia: 'Escribir "...por el siguiente:" y después el texto entre comillas.',
     fuente: "Manual de Técnica Legislativa, regla 41.b",
-    severidad: "baja",
+    severidad: "media",
     check(text, { normalizar, contexto }) {
       const t = normalizar(text);
       const encontrados = [...t.matchAll(/por el siguiente/g)].filter((m) => {
@@ -1234,7 +1234,7 @@ window.ReglasNacional = [
       "con números comunes.",
     sugerencia: 'Escribir "Sección 1ª" en vez de "Sección I" o "Sección 1".',
     fuente: "Manual de Técnica Legislativa, regla 8, punto 5",
-    severidad: "baja",
+    severidad: "media",
     check(text, { contexto }) {
       const encontrados = [...text.matchAll(/\bsecci[óo]n\s+([ivxlcdm]+|\d+)(?![ªa°])\b/gi)];
       return {
@@ -1252,7 +1252,7 @@ window.ReglasNacional = [
       '("capítulo primero"), no con números comunes.',
     sugerencia: 'Escribir "CAPÍTULO II" en vez de "CAPÍTULO 2".',
     fuente: "Manual de Técnica Legislativa, regla 8, punto 5",
-    severidad: "baja",
+    severidad: "media",
     check(text, { contexto }) {
       const encontrados = [...text.matchAll(/\bcap[íi]tulo\s+\d+\b/gi)];
       return {
@@ -1270,7 +1270,7 @@ window.ReglasNacional = [
       "numeradas en forma continua, sin saltos ni repeticiones.",
     sugerencia: 'Corregir la numeración para que sea continua: "CAPÍTULO I", "CAPÍTULO II", "CAPÍTULO III".',
     fuente: "Manual de Técnica Legislativa, regla 8, punto 5",
-    severidad: "baja",
+    severidad: "media",
     check(text) {
       const ROMANOS = { i: 1, ii: 2, iii: 3, iv: 4, v: 5, vi: 6, vii: 7, viii: 8, ix: 9, x: 10 };
       const encontrados = [...text.matchAll(/\bcap[íi]tulo\s+([ivx]+)\b/gi)];
@@ -1294,7 +1294,7 @@ window.ReglasNacional = [
       '10 en adelante sin ese signo ("Artículo 10", "Artículo 25").',
     sugerencia: 'Escribir "Artículo 3°" (del 1 al 9) y "Artículo 12" (del 10 en adelante).',
     fuente: "Manual de Técnica Legislativa, regla 9, punto 4",
-    severidad: "baja",
+    severidad: "alta",
     check(text, { contexto }) {
       const problemas = [];
       for (const m of text.matchAll(/art[íi]culo\s+(\d+)\s*([°ºo])?/gi)) {
@@ -1318,7 +1318,7 @@ window.ReglasNacional = [
       '("a)", "b)", "c)"), no con punto ni con guión.',
     sugerencia: 'Escribir "a) primer punto;" en vez de "a. primer punto;".',
     fuente: "Manual de Técnica Legislativa, regla 11, punto 2",
-    severidad: "baja",
+    severidad: "media",
     check(text, { contexto }) {
       const encontrados = [...text.matchAll(/\n\s*([a-hj-z])[.\-]\s+[a-záéíóúñ]/g)];
       return {
@@ -1360,9 +1360,9 @@ window.ReglasNacional = [
     descripcion:
       "Junto al título del anexo debe ir, entre paréntesis, el número del artículo que lo manda a " +
       "consultar. Así se sabe de dónde viene ese anexo.",
-    sugerencia: 'Escribir: "ANEXO I — Listado de actividades (artículo 5°)".',
+    sugerencia: 'Escribir: "ANEXO A — Listado de actividades (artículo 5°)".',
     fuente: "Manual de Técnica Legislativa, regla 13, punto 1",
-    severidad: "baja",
+    severidad: "media",
     check(text, { contexto }) {
       const anexos = [...text.matchAll(/\banexo\s+([ivxlcdm]+|[a-z]|\d+)\b/gi)];
       if (anexos.length === 0) return { cumple: true };
@@ -1387,7 +1387,7 @@ window.ReglasNacional = [
       'La primera vez escribir: "el Registro Nacional de Actividades Productivas (en adelante, ' +
       '\'el Registro\')", y después usar solamente "el Registro".',
     fuente: "Manual de Técnica Legislativa, regla 36, punto 3",
-    severidad: "baja",
+    severidad: "media",
     check(text, { normalizar }) {
       const t = normalizar(text);
       if (/en adelante/.test(t)) return { cumple: true };
@@ -1416,7 +1416,7 @@ window.ReglasNacional = [
       "conviene reescribir la frase en vez de usar paréntesis.",
     sugerencia: "Reescribir la aclaración como parte de la oración, o como un inciso aparte.",
     fuente: "Manual de Técnica Legislativa, regla 41.h",
-    severidad: "baja",
+    severidad: "media",
     check(text, { contexto }) {
       const sospechosos = [...text.matchAll(/\(([^)]{15,120})\)/g)].filter((m) => {
         const contenido = m[1].trim();
@@ -1441,7 +1441,7 @@ window.ReglasNacional = [
       "normas o fechas. Entre palabras, conviene escribir la opción completa.",
     sugerencia: 'En vez de "el/la solicitante", escribir "la persona solicitante" o "el solicitante o la solicitante".',
     fuente: "Manual de Técnica Legislativa, regla 41.l",
-    severidad: "baja",
+    severidad: "media",
     check(text, { contexto }) {
       const encontrados = [...text.matchAll(/[a-záéíóúñ]{2,}\/[a-záéíóúñ]{2,}/gi)].filter(
         (m) => !/^y\/o$/i.test(m[0])
@@ -1461,7 +1461,7 @@ window.ReglasNacional = [
       "empezar cada año y sin el año el dato es ambiguo.",
     sugerencia: 'Escribir "Decreto N° 1344/1998" en vez de "Decreto N° 1344".',
     fuente: "Manual de Técnica Legislativa, regla 44, punto 1.d",
-    severidad: "baja",
+    severidad: "alta",
     check(text, { contexto }) {
       // Se toma el número del decreto y se mira si inmediatamente después viene "/año".
       // Ojo: el punto final de la oración NO debe confundirse con el separador de miles.
@@ -1484,7 +1484,7 @@ window.ReglasNacional = [
       "hay que saltar por varios artículos, lo que dificulta la lectura.",
     sugerencia: "Escribir la disposición completa en el artículo, o remitir directamente al artículo que tiene el contenido final.",
     fuente: "Manual de Técnica Legislativa, regla 48, punto 3",
-    severidad: "baja",
+    severidad: "alta",
     check(text, { normalizar }) {
       const t = normalizar(text);
       const bloques = [...t.matchAll(/art[ií]culo\s+(\d+)\s*[°ºo]?\s*[:.\-]/g)];
@@ -1521,7 +1521,7 @@ window.ReglasNacional = [
       "Remitir a un artículo posterior obliga a saltar adelante y volver.",
     sugerencia: "Reordenar los artículos para que lo referenciado venga antes, o escribir el contenido directamente.",
     fuente: "Marco Teórico de Técnica Legislativa — estructura del texto normativo, punto (e)",
-    severidad: "baja",
+    severidad: "alta",
     check(text, { normalizar }) {
       const t = normalizar(text);
       const bloques = [...t.matchAll(/art[ií]culo\s+(\d+)\s*[°ºo]?\s*[:.\-]/g)];
@@ -1550,7 +1550,7 @@ window.ReglasNacional = [
       "frase que los introduce, así que empiezan en minúscula.",
     sugerencia: 'Escribir "a) los organismos nacionales;" en vez de "a) Los organismos nacionales;".',
     fuente: "Marco Teórico de Técnica Legislativa — el artículo y sus incisos",
-    severidad: "baja",
+    severidad: "media",
     check(text, { contexto }) {
       const encontrados = [...text.matchAll(/\n\s*(?:[a-z]\)|\d+\.)\s+([A-ZÁÉÍÓÚÑ][a-záéíóúñ]{2,})/g)];
       return {
@@ -1568,7 +1568,7 @@ window.ReglasNacional = [
       "porque, si forma parte, debe publicarse con la ley y solo puede cambiarse modificando la ley.",
     sugerencia: 'Agregar en el artículo que lo menciona: "...que como Anexo I forma parte integrante de la presente ley."',
     fuente: "Marco Teórico de Técnica Legislativa — seguridad jurídica, punto 2.f",
-    severidad: "baja",
+    severidad: "alta",
     ubicacionFija: "En el artículo que menciona el Anexo",
     check(text, { normalizar }) {
       const t = normalizar(text);
@@ -1579,6 +1579,185 @@ window.ReglasNacional = [
         ejemplos: aclara
           ? []
           : ['El documento tiene un anexo pero no dice si "forma parte integrante" de la norma.'],
+      };
+    },
+  },
+  {
+    id: "nac-065",
+    titulo: "Un porcentaje está escrito solo con la cifra",
+    descripcion:
+      "Igual que el resto de las cantidades, los porcentajes se escriben primero con palabras y " +
+      "después con la cifra entre paréntesis. El símbolo suelto se reserva para tablas y listados.",
+    sugerencia: 'Escribir "el cincuenta por ciento (50%)" en vez de "el 50%".',
+    fuente: "Manual de Técnica Legislativa, regla 39, punto 1 — regla 41 (signo por ciento)",
+    severidad: "media",
+    check(text, { contexto }) {
+      // "cincuenta por ciento (50%)" es la forma correcta: la cifra va entre paréntesis
+      // después de las letras. Por eso no se marca lo que ya está dentro de un paréntesis.
+      const encontrados = [...text.matchAll(/(?<![(\d,.])\b\d+(?:[.,]\d+)?\s*(?:%|por\s+ciento\b)/gi)];
+      return {
+        cumple: encontrados.length === 0,
+        ejemplos: encontrados
+          .slice(0, 4)
+          .map((m) => `"${m[0].trim()}" en: "${contexto(text, m.index, 40)}"`),
+      };
+    },
+  },
+
+  {
+    id: "nac-066",
+    titulo: 'Una cita interna dice "de la presente ley" en vez del número',
+    descripcion:
+      'Para remitir a otra parte del mismo texto alcanza con el número ("el artículo 5°"). Agregar ' +
+      '"de la presente ley" o "del presente artículo" sobra, salvo que sin eso quede alguna duda ' +
+      "sobre a qué norma se refiere.",
+    sugerencia: 'Escribir "lo previsto en el artículo 5°" en vez de "lo previsto en el artículo 5° de la presente ley".',
+    fuente: "Manual de Técnica Legislativa, regla 45, punto 8",
+    severidad: "alta",
+    check(text, { contexto }) {
+      const patrones = [
+        /\b(art[íi]culo|inciso|cap[íi]tulo|t[íi]tulo|secci[óo]n|anexo)\s+[\dA-Za-z°ºª]+\s*,?\s+de\s+la\s+presente(\s+(ley|norma|ordenanza|resoluci[óo]n))?\b/gi,
+        /\b(inciso|apartado|p[áa]rrafo|letra)\s+[\dA-Za-z°ºª)]+\s+del\s+presente\s+art[íi]culo\b/gi,
+      ];
+      const encontrados = [];
+      for (const patron of patrones) {
+        for (const m of text.matchAll(patron)) encontrados.push(m);
+      }
+      return {
+        cumple: encontrados.length === 0,
+        ejemplos: encontrados.slice(0, 4).map((m) => `"${contexto(text, m.index, 45)}"`),
+      };
+    },
+  },
+
+  {
+    id: "nac-067",
+    titulo: "Se cita un decreto con el año en dos cifras",
+    descripcion:
+      "Al citar un decreto o una resolución, el año va completo, con cuatro cifras. Con dos cifras " +
+      "queda ambiguo a qué año corresponde.",
+    sugerencia: 'Escribir "Decreto N° 1344/1998" en vez de "Decreto N° 1344/98".',
+    fuente: "Manual de Técnica Legislativa, regla 44, punto 1.d",
+    severidad: "alta",
+    check(text, { contexto }) {
+      const encontrados = [
+        ...text.matchAll(
+          /\b(decreto|resoluci[óo]n|disposici[óo]n)\s+n?[°ºo]?\.?\s*\d+(?:\.\d{3})*\s*\/\s*\d{2}(?!\d)/gi
+        ),
+      ];
+      return {
+        cumple: encontrados.length === 0,
+        ejemplos: encontrados
+          .slice(0, 4)
+          .map((m) => `"${m[0].trim()}" en: "${contexto(text, m.index, 40)}"`),
+      };
+    },
+  },
+
+  {
+    id: "nac-068",
+    titulo: 'Se llama "inciso" a lo que es una letra',
+    descripcion:
+      'Los incisos van numerados ("1°.", "2°."). Las divisiones que van adentro de un inciso se ' +
+      'señalan con letra y paréntesis, y al citarlas se las nombra "letra a)", no "inciso a)".',
+    sugerencia: 'Escribir "la letra a) del artículo 5°" en vez de "el inciso a) del artículo 5°".',
+    fuente: "Manual de Técnica Legislativa, regla 46, punto 2",
+    severidad: "alta",
+    check(text, { contexto }) {
+      const encontrados = [...text.matchAll(/\binciso\s+([a-z])\s*\)/gi)];
+      return {
+        cumple: encontrados.length === 0,
+        ejemplos: encontrados
+          .slice(0, 4)
+          .map((m) => `"${m[0].trim()}" debería decir "letra ${m[1]})": "${contexto(text, m.index, 40)}"`),
+      };
+    },
+  },
+
+  {
+    id: "nac-069",
+    titulo: "Las derogaciones están repartidas en varios artículos",
+    descripcion:
+      "Todo lo que la norma deja sin efecto debe ir reunido en un solo artículo, entre las " +
+      "disposiciones finales. Si las derogaciones aparecen desparramadas, cuesta saber qué quedó " +
+      "eliminado en total.",
+    sugerencia:
+      'Juntar todas las derogaciones en un único artículo al final: "Deróganse el artículo 5° de la ' +
+      'Ley N° 12.345 y el artículo 2° de la Ley N° 20.000."',
+    fuente: "Manual de Técnica Legislativa, regla 57, punto 2",
+    severidad: "alta",
+    check(text, { normalizar }) {
+      const t = normalizar(text);
+      const bloques = [...t.matchAll(/art[ií]culo\s+(\d+)\s*[°ºo]?\s*[:.\-]/g)];
+      if (bloques.length < 2) return { cumple: true };
+      const conDerogacion = [];
+      for (let i = 0; i < bloques.length; i++) {
+        const numero = parseInt(bloques[i][1], 10);
+        const fin = i + 1 < bloques.length ? bloques[i + 1].index : t.length;
+        const cuerpo = t.slice(bloques[i].index, fin);
+        // Solo cuentan las derogaciones que nombran algo concreto, igual que en nac-007.
+        if (/\b(deroga|abroga)[a-z]*\b[^.]{0,80}?(articulo|art\.|ley)\s*(n[°ºo]?\.?)?\s*\d/.test(cuerpo)) {
+          conDerogacion.push(numero);
+        }
+      }
+      const unicos = [...new Set(conDerogacion)];
+      return {
+        cumple: unicos.length <= 1,
+        ejemplos:
+          unicos.length <= 1
+            ? []
+            : [
+                `Hay derogaciones en los artículos ${unicos.join(", ")}. Conviene reunirlas en uno solo, ` +
+                  "entre las disposiciones finales.",
+              ],
+      };
+    },
+  },
+
+  {
+    id: "nac-070",
+    titulo: "Los capítulos y los títulos están al revés",
+    descripcion:
+      'En la jerarquía del Manual, el "Título" es más grande que el "Capítulo": un título agrupa ' +
+      "capítulos, no al revés. Si el primer capítulo aparece antes del primer título, la estructura " +
+      "está invertida.",
+    sugerencia: 'Reordenar las divisiones así: "TÍTULO I" y, adentro, "CAPÍTULO I", "CAPÍTULO II".',
+    fuente: "Manual de Técnica Legislativa, regla 8, punto 2",
+    severidad: "media",
+    check(text, { normalizar, contexto }) {
+      const t = normalizar(text);
+      const primerTitulo = t.search(/\btitulo\s+([ivxlcdm]+|\d+)\b/);
+      const primerCapitulo = t.search(/\bcapitulo\s+([ivxlcdm]+|\d+)\b/);
+      if (primerTitulo < 0 || primerCapitulo < 0) return { cumple: true };
+      if (primerTitulo < primerCapitulo) return { cumple: true };
+      return {
+        cumple: false,
+        ejemplos: [
+          `El primer capítulo aparece antes del primer título: "${contexto(text, primerCapitulo, 45)}"`,
+        ],
+      };
+    },
+  },
+
+  {
+    id: "nac-071",
+    titulo: "Un anexo está identificado con número en vez de letra",
+    descripcion:
+      'El Manual pide identificar cada anexo con una letra mayúscula ("Anexo A", "Anexo B"), no con ' +
+      "número romano ni con número común. Ojo: es una regla muy poco seguida en la práctica, así que " +
+      "revisá si en tu ámbito se acostumbra de otra forma.",
+    sugerencia: 'Escribir "ANEXO A" en vez de "ANEXO II" o "ANEXO 2".',
+    fuente: "Manual de Técnica Legislativa, regla 13, punto 2",
+    severidad: "media",
+    check(text, { contexto }) {
+      // Un solo carácter no se marca: "Anexo A" es correcto, y en "Anexo I" no se puede
+      // distinguir el número romano uno de la letra I. Solo se señala lo inequívoco.
+      const encontrados = [...text.matchAll(/\banexo\s+(\d+|[IVXLCDM]{2,})\b/gi)];
+      return {
+        cumple: encontrados.length === 0,
+        ejemplos: encontrados
+          .slice(0, 4)
+          .map((m) => `"${m[0].trim()}" en: "${contexto(text, m.index, 35)}"`),
       };
     },
   },

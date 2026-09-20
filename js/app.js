@@ -96,8 +96,15 @@
       <ul class="resumen-desglose">
         <li class="resumen-item alta">${conteo.alta} de prioridad alta</li>
         <li class="resumen-item media">${conteo.media} de prioridad media</li>
-        <li class="resumen-item baja">${conteo.baja} menor${conteo.baja === 1 ? "" : "es"}</li>
+        <li class="resumen-item baja">${conteo.baja} de prioridad baja</li>
       </ul>
+      ${
+        conteo.alta > 0
+          ? `<p class="aviso-alta">Hay ${conteo.alta} correccion${conteo.alta === 1 ? "" : "es"} de prioridad alta sin resolver. Son las que
+             pueden afectar el efecto jurídico, la vigencia o el alcance de la norma: conviene
+             empezar por esas.</p>`
+          : ""
+      }
     `;
 
     accionesEl.hidden = total === 0;
@@ -118,36 +125,53 @@
       return;
     }
 
-    const orden = { alta: 0, media: 1, baja: 2 };
-    const ordenados = [...analisis.hallazgos].sort((a, b) => orden[a.severidad] - orden[b.severidad]);
+    // El Manual clasifica cada regla en tres prioridades. Los hallazgos se muestran
+    // agrupados igual, y en ese orden: lo que puede afectar el efecto jurídico de la
+    // norma primero, y lo ortotipográfico al final.
+    const GRUPOS = [
+      {
+        clave: "alta",
+        titulo: "Prioridad alta",
+        pista: "pueden alterar el efecto jurídico, la vigencia o el alcance de la norma",
+      },
+      {
+        clave: "media",
+        titulo: "Prioridad media",
+        pista: "no invalidan la norma, pero restan claridad y complican modificarla o citarla después",
+      },
+      {
+        clave: "baja",
+        titulo: "Prioridad baja",
+        pista: "detalles de presentación y ortotipografía, sin efecto sobre el sentido jurídico",
+      },
+    ];
 
-    // Las de prioridad baja son muchas y, mezcladas con el resto, tapan lo
-    // importante. Se muestran aparte, plegadas, para que primero se vea lo que
-    // hay que mirar sí o sí.
-    const principales = ordenados.filter((h) => h.severidad !== "baja");
-    const menores = ordenados.filter((h) => h.severidad === "baja");
+    let html = "";
+    GRUPOS.forEach((grupo, i) => {
+      const delGrupo = analisis.hallazgos.filter((h) => h.severidad === grupo.clave);
+      if (delGrupo.length === 0) return;
+      const cuerpo = delGrupo.map(renderHallazgo).join("");
 
-    let html = principales.map(renderHallazgo).join("");
+      // El grupo más urgente que tenga algo va siempre desplegado. Los de abajo se
+      // pliegan, para que una corrección menor no tape una que sí importa.
+      const hayAlgoMasUrgente = GRUPOS.slice(0, i).some((g) =>
+        analisis.hallazgos.some((h) => h.severidad === g.clave)
+      );
 
-    if (principales.length === 0) {
-      html = `<div class="sin-principales">
-        No se detectaron problemas de prioridad alta ni media.
-      </div>`;
-    }
+      if (!hayAlgoMasUrgente) {
+        html += `<p class="label">${grupo.titulo} · ${delGrupo.length}</p>${cuerpo}`;
+        return;
+      }
 
-    if (menores.length > 0) {
-      const plural = menores.length === 1;
-      // Si no hay nada más importante que mostrar, no tiene sentido esconderlas.
-      const abierto = principales.length === 0 ? " open" : "";
       html += `
-        <details class="menores"${abierto}>
+        <details class="menores">
           <summary class="menores-summary">
-            <span class="menores-titulo">Ver ${menores.length} sugerencia${plural ? "" : "s"} menor${plural ? "" : "es"}</span>
-            <span class="menores-hint">detalles de forma: puntuación, siglas, abreviaturas, redacción</span>
+            <span class="menores-titulo">Ver ${delGrupo.length} de ${grupo.titulo.toLowerCase()}</span>
+            <span class="menores-hint">${grupo.pista}</span>
           </summary>
-          <div class="menores-lista">${menores.map(renderHallazgo).join("")}</div>
+          <div class="menores-lista">${cuerpo}</div>
         </details>`;
-    }
+    });
 
     listaHallazgosEl.innerHTML = html;
   }
@@ -228,7 +252,7 @@
     return (tmp.textContent || "").replace(/\s+/g, " ").trim();
   }
 
-  const PRIORIDAD_TEXTO = { alta: "PRIORIDAD ALTA", media: "PRIORIDAD MEDIA", baja: "SUGERENCIAS MENORES" };
+  const PRIORIDAD_TEXTO = { alta: "PRIORIDAD ALTA", media: "PRIORIDAD MEDIA", baja: "PRIORIDAD BAJA" };
 
   /** Arma la lista completa en texto plano, para pegar en un mail o un documento. */
   function analisisATexto(analisis) {
@@ -267,6 +291,20 @@
       if (h.fuente) lineas.push(`   Fuente: ${h.fuente}`);
       lineas.push("");
     }
+
+    const conteo = { alta: 0, media: 0, baja: 0 };
+    for (const h of analisis.hallazgos) conteo[h.severidad]++;
+    lineas.push(
+      "".padEnd(60, "-"),
+      "SÍNTESIS",
+      "".padEnd(60, "-"),
+      `Prioridad alta:  ${conteo.alta}`,
+      `Prioridad media: ${conteo.media}`,
+      `Prioridad baja:  ${conteo.baja}`,
+      `Total: ${total} sobre ${analisis.totalReglas} reglas evaluadas.`,
+      `Incumplimientos de prioridad alta pendientes: ${conteo.alta > 0 ? "sí" : "no"}.`,
+      ""
+    );
 
     return lineas.join("\n");
   }

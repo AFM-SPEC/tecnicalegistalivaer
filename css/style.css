@@ -333,6 +333,18 @@ body {
 .resumen-item.media::before { background: var(--media); }
 .resumen-item.baja::before { background: var(--baja); }
 
+/* ---------- Aviso de prioridad alta ---------- */
+
+/* Sin recuadro ni fondo, como el resto de la página: alcanza con la línea al
+   costado en el color de prioridad alta para que se note sin gritar. */
+.aviso-alta {
+  border-left: 2px solid var(--alta);
+  padding-left: 1rem;
+  margin: 1.25rem 0 0;
+  font-size: var(--texto-sm);
+  color: var(--tinta-media);
+}
+
 /* Una sola línea vertical de color marca la prioridad. Antes había además
    recuadro, fondo y una etiqueta con borde: tres señales para decir lo mismo. */
 .hallazgo {
@@ -637,6 +649,7 @@ body {
   .hallazgo-label,
   .menores-titulo,
   .menores-hint,
+  .aviso-alta,
   .ejemplo,
   .ejemplo-ubicacion,
   .hallazgo-ejemplos,
@@ -664,6 +677,10 @@ body {
   .sin-hallazgos,
   .sin-principales {
     border-left-color: #ccc;
+  }
+
+  .aviso-alta {
+    border-left-color: #111;
   }
 
   /* Sobre blanco, el salmón de "prioridad alta" queda en 2,7:1: ilegible.

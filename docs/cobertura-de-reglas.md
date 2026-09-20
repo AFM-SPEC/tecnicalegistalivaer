@@ -21,12 +21,12 @@ Estado posible:
 | 5 | Título de normas que aprueban tratados | **CUBIERTA** (nac-048) |
 | 6 | Título de normas que modifican otras | **CUBIERTA** (nac-016) |
 | 7 | Título de normas con partes modificatorias | **CUBIERTA** por nac-016 (mismo criterio) |
-| 8 | Divisiones superiores al artículo (jerarquía, epígrafe, numeración) | **CUBIERTA** (nac-019, nac-042, nac-043, nac-050, nac-051, nac-052) |
+| 8 | Divisiones superiores al artículo (jerarquía, epígrafe, numeración) | **CUBIERTA** (nac-019, nac-042, nac-043, nac-050, nac-051, nac-052, nac-070 jerarquía título/capítulo) |
 | 9 | El artículo (numeración, brevedad, epígrafe, unidad) | **CUBIERTA** (nac-002, nac-004, nac-005, nac-014, nac-053) |
 | 10 | Los incisos (numeración, punto y aparte) | **CUBIERTA** parcialmente (nac-063) |
 | 11 | Divisiones internas de incisos (letras con paréntesis, sin guiones) | **CUBIERTA** (nac-020, nac-054) |
 | 12 | Anexos (van al final del articulado) | **CUBIERTA** (nac-055) |
-| 13 | Encabezamiento de los anexos (título + artículo que remite) | **CUBIERTA** (nac-036, nac-056) |
+| 13 | Encabezamiento de los anexos (título + artículo que remite) | **CUBIERTA** (nac-036, nac-056, nac-071 identificación con letra) |
 | 14 | Referencia expresa del artículo al anexo | **CUBIERTA** (nac-030) |
 | 15 | Divisiones internas de los anexos | **NO AUTOMATIZABLE** — depende del contenido del anexo |
 | 16 | Homogeneidad material / normas intrusas | **NO AUTOMATIZABLE** — requiere evaluar si un tema es ajeno al objeto |
@@ -62,14 +62,14 @@ Estado posible:
 | 36 | Uso de abreviaturas y siglas | **CUBIERTA** (nac-008, nac-037, nac-057) |
 | 37 | Escritura de siglas (sin puntos, sin plural) | **CUBIERTA** (nac-009, nac-045) |
 | 38 | Uso de letras mayúsculas | **NO DETECTABLE** con fiabilidad — el OCR altera mayúsculas y minúsculas |
-| 39 | Escritura de números (letra + cifra) | **CUBIERTA** (nac-024) |
+| 39 | Escritura de números (letra + cifra) | **CUBIERTA** (nac-024, nac-065 porcentajes) |
 | 40 | Fechas (año en cuatro cifras) | **CUBIERTA** (nac-013) |
-| 41 | Signos de puntuación (a–m) | **CUBIERTA** (nac-025 suspensivos, nac-038 comillas, nac-049 dos puntos, nac-058 paréntesis, nac-059 barra) |
+| 41 | Signos de puntuación (a–m) | **CUBIERTA** (nac-025 suspensivos, nac-038 comillas, nac-049 dos puntos, nac-058 paréntesis, nac-059 barra, nac-065 signo por ciento) |
 | 42 | Símbolos de unidad de medida o monetaria | **CUBIERTA** (nac-046) |
 | 43 | Símbolos técnicos o científicos | **NO AUTOMATIZABLE** — requiere saber si su uso era imprescindible |
-| 44 | Citas de disposiciones normativas | **CUBIERTA** parcialmente (nac-060 año del decreto) |
-| 45 | Reglas particulares de cita | **CUBIERTA** (nac-028 publicación, nac-047 referencias por posición) |
-| 46 | Citas de particiones internas | **CUBIERTA** (nac-032) |
+| 44 | Citas de disposiciones normativas | **CUBIERTA** (nac-060 falta el año, nac-067 año en dos cifras) |
+| 45 | Reglas particulares de cita | **CUBIERTA** (nac-028 publicación, nac-047 referencias por posición, nac-066 "de la presente ley") |
+| 46 | Citas de particiones internas | **CUBIERTA** (nac-032, nac-068 "inciso a)" por "letra a)") |
 | 47 | Citas de normas comunitarias o internacionales | **NO AUTOMATIZABLE** — depende de la terminología del texto citado |
 
 ## PARTE CUARTA — Referencias
@@ -90,7 +90,7 @@ Estado posible:
 | 54 | Modificaciones implícitas y explícitas | **CUBIERTA** (nac-007) |
 | 55 | Modificaciones explícitas textuales | **CUBIERTA** (nac-038, nac-049) |
 | 56 | Cuándo conviene modificar textualmente | **NO AUTOMATIZABLE** — decisión de técnica legislativa caso por caso |
-| 57 | Abrogación expresa vs. innominada | **CUBIERTA** (nac-010) |
+| 57 | Abrogación expresa vs. innominada | **CUBIERTA** (nac-010, nac-069 derogaciones reunidas en un artículo) |
 | 58 | Modificaciones explícitas no textuales | **NO AUTOMATIZABLE** — requiere comparar con la norma anterior |
 | 59 | Modificaciones textuales múltiples | **NO AUTOMATIZABLE** — es una recomendación de redacción, no un error detectable |
 | 60 | Sistemática de las modificaciones | **NO AUTOMATIZABLE** — requiere comparar con la estructura de la norma modificada |
@@ -129,7 +129,35 @@ Estado posible:
 
 ## Resumen
 
-- **Reglas automáticas implementadas: 64**
+## Prioridad de cada regla
+
+Cada una de las 71 reglas del Manual tiene asignada una prioridad de cumplimiento —**alta**,
+**media** o **baja**— que no cambia el contenido de la regla: indica qué tan grave es
+incumplirla y en qué orden conviene corregir.
+
+- **Alta** (41 reglas del Manual): el incumplimiento puede alterar el efecto jurídico, la
+  validez, la vigencia o el alcance de la norma.
+- **Media** (26 reglas): no invalida la norma, pero resta claridad y complica citarla,
+  modificarla o consolidarla después.
+- **Baja** (4 reglas: 2, 35, 37 y 38): ortotipografía y presentación, sin efecto sobre el
+  sentido jurídico.
+
+Cada regla automática hereda la prioridad de la regla del Manual que aplica. Las que se
+apoyan en el Marco Teórico toman la prioridad de la regla del Manual más cercana.
+
+Dos reglas se **escalaron** por contexto, algo que el Manual permite hacer (nunca a la
+inversa):
+
+| Regla | Base | Queda en | Motivo |
+|---|---|---|---|
+| nac-038 (sustitución sin comillas) | media (regla 41) | **alta** | sin comillas no se sabe dónde empieza y termina el texto que se incorpora: queda incierto el alcance |
+| nac-064 (anexo sin "forma parte") | media (regla 12) | **alta** | impide determinar qué contenido integra normativamente la norma |
+
+Reparto resultante de las 71 reglas automáticas: **33 de prioridad alta, 35 media y 3 baja**.
+
+---
+
+- **Reglas automáticas implementadas: 71** (33 alta, 35 media, 3 baja)
 - **Puntos del Manual cubiertos total o parcialmente: 40 de 71**
 - **Puntos que requieren criterio humano (no automatizables): 28**
 - **Puntos sin formato detectable: 3**
