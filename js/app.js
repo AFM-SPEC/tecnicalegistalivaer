@@ -106,6 +106,22 @@
     SUBSIDIARIO: "Criterio de estilo, no obligación provincial",
   };
 
+  /**
+   * En los municipios casi ninguna regla de redacción tiene una norma común que
+   * la imponga: la mayoría son criterios de estilo, y lo que depende de cada
+   * Concejo se aclara como tal.
+   */
+  const EXIGENCIA_MUNICIPAL = {
+    ...EXIGENCIA,
+    ACOSTUMBRA: "Práctica frecuente, no obligación",
+    SUBSIDIARIO: "Criterio de estilo, no obligación municipal",
+    "VERIFICAR LOCALMENTE": "Depende del reglamento de cada Concejo",
+  };
+
+  function exigenciaDe(autoridad) {
+    return (ultimoAmbito === "municipal" ? EXIGENCIA_MUNICIPAL : EXIGENCIA)[autoridad];
+  }
+
   /** De dónde salen las reglas de cada ámbito. Se muestra al final del informe. */
   const FUENTES = {
     nacional: {
@@ -139,6 +155,26 @@
           'sólo donde no hay regla entrerriana que cubra el punto.',
       ],
       cierre: "",
+    },
+    municipal: {
+      titulo: "De dónde salen estas reglas",
+      intro:
+        `Las ${(window.ReglasMunicipalER || []).length} reglas salen del <strong>Manual de Técnica ` +
+        "Legislativa Municipal de Entre Ríos</strong>, que ordena estas fuentes:",
+      lista: [
+        "<strong>Constitución de la Provincia de Entre Ríos</strong> y <strong>Ley Orgánica de " +
+          "Municipios Nº 10.027</strong> — el marco del régimen municipal. La herramienta no controla " +
+          "competencia, trámite, mayorías, promulgación ni publicación.",
+        '<strong>Manual de Técnica Legislativa</strong> — Digesto Jurídico Argentino, publicado por ' +
+          'InfoLeg en <a class="enlace-fuente" href="https://www.infoleg.gob.ar/basehome/manualdetecnicalegislativa.html" ' +
+          'target="_blank" rel="noopener">https://www.infoleg.gob.ar/basehome/manualdetecnicalegislativa.html</a>, ' +
+          "y doctrina especializada — criterio subsidiario, del que salen casi todas las reglas automáticas.",
+        "<strong>Reglamento Interno de cada Concejo Deliberante</strong> — todavía no se aplica: la " +
+          "fórmula de sanción, el artículo de cierre y las firmas dependen de cada municipio y no se revisan.",
+      ],
+      cierre:
+        "Ninguna observación es una obligación general de todos los municipios: son recomendaciones " +
+        "de estilo, y por eso ninguna pasa de prioridad media.",
     },
   };
 
@@ -848,7 +884,7 @@
       })
       .join("");
 
-    const nivel = EXIGENCIA[h.autoridad];
+    const nivel = exigenciaDe(h.autoridad);
     const partesRegla = [];
     if (nivel) {
       partesRegla.push(
@@ -1408,8 +1444,8 @@
         }
         if (h.descripcion) lineas.push(`   Problema: ${aTextoPlano(h.descripcion)}`);
         if (h.sugerencia) lineas.push(`   Recomendación: ${aTextoPlano(h.sugerencia)}`);
-        if (h.autoridad && EXIGENCIA[h.autoridad]) {
-          lineas.push(`   Exigencia: ${EXIGENCIA[h.autoridad]}`);
+        if (h.autoridad && exigenciaDe(h.autoridad)) {
+          lineas.push(`   Exigencia: ${exigenciaDe(h.autoridad)}`);
         }
         if (h.fuente) lineas.push(`   Regla aplicable: ${h.fuente}`);
         lineas.push("");

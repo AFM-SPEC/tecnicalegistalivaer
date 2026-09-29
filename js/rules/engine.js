@@ -8,7 +8,7 @@
  *   titulo: 'Fórmula de sanción presente',
  *   descripcion: 'Explicación de la regla y por qué importa.',
  *   severidad: 'alta' | 'media' | 'baja',
- *   autoridad: 'EXIGE' | ... ,   // opcional: sólo las reglas provinciales lo usan
+ *   autoridad: 'EXIGE' | ... ,   // opcional: lo usan las reglas provinciales y municipales
  *   sugerencia: 'Ejemplo concreto de cómo debería quedar el texto.',
  *   ubicacionFija: 'Al inicio, antes del Artículo 1°',  // opcional, ver abajo
  *   check(text, { normalizar, contexto, ordinal }) => { cumple: boolean, ejemplos?: string[] }
@@ -75,9 +75,9 @@ const RuleEngine = (() => {
 
   /**
    * Entre Ríos mantiene el ordinal también después del 9 ("ARTÍCULO 12°"). La
-   * regla nacional que manda cardinal desde el 10 no rige en la provincia, así
-   * que la herramienta tampoco puede escribirlo así cuando revisa una norma
-   * entrerriana.
+   * regla nacional que manda cardinal desde el 10 no rige en la provincia ni en
+   * sus municipios, así que la herramienta tampoco puede escribirlo así cuando
+   * revisa una norma entrerriana.
    */
   function ordinalER(numero) {
     return `${numero}°`;
@@ -253,7 +253,7 @@ const RuleEngine = (() => {
 
   function analyze(text, ambito) {
     const rules = getRulesFor(ambito);
-    const comoOrdinal = ambito === "provincial" ? ordinalER : ordinal;
+    const comoOrdinal = ambito === "nacional" ? ordinal : ordinalER;
     const listaHitos = hitos(text, comoOrdinal);
     const hallazgos = [];
 
@@ -324,7 +324,7 @@ const RuleEngine = (() => {
    * empezar la revisión.
    */
   function estructura(text, ambito) {
-    return hitos(text, ambito === "provincial" ? ordinalER : ordinal);
+    return hitos(text, ambito === "nacional" ? ordinal : ordinalER);
   }
 
   return { analyze, normalizar, estructura };
