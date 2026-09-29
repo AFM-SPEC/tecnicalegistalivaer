@@ -385,8 +385,8 @@ window.ReglasProvincialER = (() => {
         const cuerpo = soloArticulado(text);
         const partes = cuerpo.split(/(?=art[íi]culo\s+\d+\s*[°ºo]?\s*[.:\-–—])/i);
         // Sólo las formas normativas: no "modificaciones presupuestarias" ni "incorporar".
-        const verboMod =
-          /\b(modif[íi](c|qu)[aeá]n?se|sustit[úu]y[ae]n?se|incorp[óo]r[ae]n?se|der[óo]g[au]n?se\s+el\s+art)/i;
+        // Una derogación no está en la lista: no deja texto nuevo que transcribir.
+        const verboMod = /\b(modif[íi](c|qu)[aeá]n?se|sustit[úu]y[ae]n?se|incorp[óo]r[ae]n?se)/i;
         const refNorma = /\b(art[íi]culos?\s+\d+[^.]{0,60}\b(ley|c[óo]digo)\b|\bley\s*n?[°ºo]?\s*[\d.]{3,7})/i;
         const yaTraeTexto = /(quedar[áa]n?\s+redactad|de\s+la\s+siguiente\s+manera|siguiente\s+texto|["“»])/i;
         const ej = [];
