@@ -1,0 +1,167 @@
+/**
+ * Categorías temáticas de las reglas.
+ *
+ * La prioridad (alta/media/baja) dice cuánto urge corregir algo. Esto dice de
+ * QUÉ trata: si el problema está en el encabezado, en la estructura, en cómo se
+ * cita otra norma, etc. El informe agrupa las observaciones por esta categoría,
+ * porque quien corrige trabaja por zonas del documento, no salteado.
+ *
+ * Es sólo una clasificación de presentación: no cambia ninguna regla ni decide
+ * si algo se cumple. Una regla sin categoría cae en "Otras observaciones", así
+ * que agregar reglas nuevas nunca hace desaparecer un hallazgo de la pantalla.
+ */
+
+window.CategoriasReglas = (() => {
+  const orden = [
+    {
+      clave: "formulas",
+      titulo: "Encabezado, título y fórmulas",
+      pista: "cómo se abre y se cierra la norma, y qué anuncia su título",
+    },
+    {
+      clave: "estructura",
+      titulo: "Estructura y numeración",
+      pista: "artículos, capítulos, incisos, anexos y el orden entre ellos",
+    },
+    {
+      clave: "modificaciones",
+      titulo: "Modificaciones, derogaciones y vigencia",
+      pista: "qué le hace esta norma a las normas que ya existen, y desde cuándo",
+    },
+    {
+      clave: "citas",
+      titulo: "Citas y remisiones",
+      pista: "cómo se nombra a otra norma o a otro artículo de la misma",
+    },
+    {
+      clave: "redaccion",
+      titulo: "Redacción normativa",
+      pista: "claridad, ambigüedad y el tono imperativo que la norma necesita",
+    },
+    {
+      clave: "ortotipografia",
+      titulo: "Ortotipografía y formato",
+      pista: "siglas, cifras, comillas, mayúsculas y abreviaturas",
+    },
+    {
+      clave: "otras",
+      titulo: "Otras observaciones",
+      pista: "reglas todavía sin clasificar",
+    },
+  ];
+
+  const de = {
+    // ---- Ámbito nacional -----------------------------------------------
+    "nac-001": "formulas",
+    "nac-002": "estructura",
+    "nac-003": "formulas",
+    "nac-004": "estructura",
+    "nac-005": "redaccion",
+    "nac-006": "modificaciones",
+    "nac-007": "modificaciones",
+    "nac-008": "ortotipografia",
+    "nac-009": "ortotipografia",
+    "nac-010": "modificaciones",
+    "nac-011": "redaccion",
+    "nac-012": "redaccion",
+    "nac-013": "ortotipografia",
+    "nac-014": "estructura",
+    "nac-015": "formulas",
+    "nac-016": "formulas",
+    "nac-017": "estructura",
+    "nac-018": "formulas",
+    "nac-019": "estructura",
+    "nac-020": "estructura",
+    "nac-021": "redaccion",
+    "nac-022": "redaccion",
+    "nac-023": "redaccion",
+    "nac-024": "ortotipografia",
+    "nac-025": "citas",
+    "nac-026": "redaccion",
+    "nac-027": "estructura",
+    "nac-028": "citas",
+    "nac-029": "redaccion",
+    "nac-030": "estructura",
+    "nac-031": "redaccion",
+    "nac-032": "citas",
+    "nac-033": "citas",
+    "nac-034": "modificaciones",
+    "nac-035": "modificaciones",
+    "nac-036": "estructura",
+    "nac-037": "ortotipografia",
+    "nac-038": "modificaciones",
+    "nac-039": "redaccion",
+    "nac-040": "formulas",
+    "nac-041": "formulas",
+    "nac-042": "estructura",
+    "nac-043": "estructura",
+    "nac-044": "formulas",
+    "nac-045": "ortotipografia",
+    "nac-046": "ortotipografia",
+    "nac-047": "citas",
+    "nac-048": "formulas",
+    "nac-049": "modificaciones",
+    "nac-050": "estructura",
+    "nac-051": "estructura",
+    "nac-052": "estructura",
+    "nac-053": "estructura",
+    "nac-054": "estructura",
+    "nac-055": "estructura",
+    "nac-056": "estructura",
+    "nac-057": "redaccion",
+    "nac-058": "redaccion",
+    "nac-059": "redaccion",
+    "nac-060": "citas",
+    "nac-061": "citas",
+    "nac-062": "citas",
+    "nac-063": "ortotipografia",
+    "nac-064": "estructura",
+    "nac-065": "ortotipografia",
+    "nac-066": "citas",
+    "nac-067": "citas",
+    "nac-068": "estructura",
+    "nac-069": "modificaciones",
+    "nac-070": "estructura",
+    "nac-071": "estructura",
+
+    // ---- Provincia de Entre Ríos ---------------------------------------
+    "er-prov-001": "formulas",
+    "er-prov-002": "formulas",
+    "er-prov-003": "formulas",
+    "er-prov-004": "redaccion",
+    "er-prov-005": "estructura",
+    "er-prov-006": "modificaciones",
+    "er-prov-007": "modificaciones",
+    "er-prov-008": "estructura",
+    "er-prov-009": "citas",
+    "er-prov-010": "ortotipografia",
+    "er-prov-011": "ortotipografia",
+    "er-prov-012": "ortotipografia",
+    "er-prov-013": "redaccion",
+    "er-prov-014": "redaccion",
+    "er-prov-015": "formulas",
+    "er-prov-016": "formulas",
+    "er-prov-017": "estructura",
+    "er-prov-018": "formulas",
+    "er-prov-019": "estructura",
+    "er-prov-020": "ortotipografia",
+    "er-prov-021": "ortotipografia",
+    "er-prov-022": "citas",
+    "er-prov-023": "ortotipografia",
+    "er-prov-024": "estructura",
+    "er-prov-025": "estructura",
+    "er-prov-026": "estructura",
+    "er-prov-027": "redaccion",
+    "er-prov-028": "redaccion",
+    "er-prov-029": "redaccion",
+    "er-prov-030": "ortotipografia",
+    "er-prov-031": "ortotipografia",
+  };
+
+  /** Categoría de una regla. Las que no estén en el mapa van al final. */
+  function categoriaDe(id) {
+    return de[id] || "otras";
+  }
+
+  return { orden, de, categoriaDe };
+})();

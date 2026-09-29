@@ -3,127 +3,331 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Revisor de Técnica Legislativa</title>
+<title>Revisor de Técnica Legislativa — NEETI</title>
 <meta
   name="description"
   content="Revisá la técnica legislativa de un proyecto de ley nacional o de la Provincia de Entre Ríos: devuelve una lista de correcciones de forma, con la fuente de cada regla."
 />
+<meta name="theme-color" content="#0b1d3a" />
 <link rel="icon" href="assets/neeti-logo.jpeg?v=2" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
-<link href="https://fonts.googleapis.com/css2?family=Graduate&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="css/style.css?v=32" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap"
+  rel="stylesheet"
+/>
+<link rel="stylesheet" href="css/style.css?v=59" />
 </head>
-<body>
-  <header class="site-header">
-    <img src="assets/neeti-logo.png" alt="NEETI" class="brand-logo" />
-    <p class="eyebrow">Herramienta de análisis preliminar. No reemplaza revisión legal humana.</p>
-    <h1 class="hero-h1">Revisor de Técnica Legislativa</h1>
-    <p class="hero-sub">
-      Subí un proyecto de norma y recibí una lista de correcciones de forma
-      según reglas de técnica legislativa. Esta herramienta no evaluará el
-      contenido, coherencia ni oportunidad de la norma, solo su técnica de
-      redacción.
+<body data-fase="carga">
+
+<!-- ========================================================================
+     Cabecera institucional. Es la única franja de color de la aplicación:
+     el resto es papel.
+     ==================================================================== -->
+<header class="masthead">
+  <img src="assets/neeti-logo.png" alt="NEETI" class="masthead-logo" />
+  <span class="masthead-titulo">Revisor de Técnica Legislativa</span>
+  <span class="masthead-nota">Análisis preliminar · no reemplaza revisión legal humana</span>
+  <button type="button" class="masthead-ayuda" id="ver-tutorial" aria-label="Cómo funciona">
+    <span class="masthead-ayuda-largo">Cómo funciona</span>
+    <span class="masthead-ayuda-corto" aria-hidden="true">?</span>
+  </button>
+</header>
+
+<!-- ========================================================================
+     01 · 02 · 03 — La pantalla inicial: un documento, una jurisdicción, un botón.
+     ==================================================================== -->
+<main class="pliego" id="pantalla-carga">
+  <div class="portada">
+    <h1 class="portada-titulo">Revisión de técnica legislativa</h1>
+    <p class="portada-bajada">
+      Subí tu proyecto y recibí las correcciones.
     </p>
-  </header>
+  </div>
 
-  <main class="container">
-    <section class="panel" id="panel-carga">
-      <div class="carga-resumen" id="carga-resumen" hidden>
-        <p class="carga-resumen-texto">
-          <span id="carga-resumen-archivo"></span>
-          <span class="carga-resumen-ambito" id="carga-resumen-ambito"></span>
+  <ol class="pasos">
+
+    <!-- 01 ---------------------------------------------------------------- -->
+    <li class="paso">
+      <span class="paso-numero" aria-hidden="true">01</span>
+      <div class="paso-rotulo">
+        <h2 class="paso-titulo">Documento</h2>
+        <p class="paso-ayuda">
+          Leemos texto, fotos y escaneo
         </p>
-        <button type="button" id="btn-otro" class="btn-secundario">Analizar otro documento</button>
       </div>
 
-      <div class="carga-detalle" id="carga-detalle">
-      <p class="label">01 · Cargá el documento</p>
-      <label class="dropzone" id="dropzone">
-        <span id="dropzone-text" class="dropzone-texto">Arrastrá un archivo acá o hacé clic para elegirlo</span>
-        <span class="dropzone-hint">PDF, DOC, DOCX, MD, TXT, PNG, JPG, JPEG</span>
-        <input
-          type="file"
-          id="file-input"
-          class="file-input"
-          accept=".pdf,.doc,.docx,.md,.txt,.png,.jpg,.jpeg"
-        />
-      </label>
-      <p id="file-info" class="file-info" role="status"></p>
+      <div class="paso-control">
+        <label class="dropzone" id="dropzone" data-estado="inicial">
+          <input
+            type="file"
+            id="file-input"
+            class="dropzone-input"
+            accept=".pdf,.doc,.docx,.md,.txt,.png,.jpg,.jpeg"
+          />
 
-      <p class="label" id="label-ambito">02 · Elegí el ámbito de la norma</p>
-      <p class="ayuda">
-        ¿Es una ley del Congreso de la Nación, una ley de la Legislatura provincial
-        o una ordenanza de un Concejo Deliberante?
-      </p>
-      <div class="ambito-selector" role="radiogroup" aria-labelledby="label-ambito">
-        <label class="ambito-option">
-          <input type="radio" name="ambito" value="nacional" checked />
-          <span>Nacional</span>
-        </label>
-        <label class="ambito-option">
-          <input type="radio" name="ambito" value="provincial" />
-          <span>Provincial (Entre Ríos)</span>
-        </label>
-        <label class="ambito-option ambito-option--proximamente">
-          <input type="radio" name="ambito" value="municipal" disabled />
-          <span>Municipal (Entre Ríos)</span>
-          <span class="ambito-proximamente">Próximamente</span>
-        </label>
-      </div>
-      <p class="ayuda ayuda--nota">
-        Las ordenanzas municipales todavía no se pueden revisar: falta relevar las
-        reglas de los concejos deliberantes entrerrianos.
-      </p>
+          <span class="dropzone-cuerpo">
+            <span class="dropzone-titulo" id="dropzone-titulo">Arrastrá el proyecto acá</span>
+            <span class="dropzone-accion" id="dropzone-accion">o hacé clic para elegir un archivo</span>
+            <span class="dropzone-formatos" id="dropzone-formatos">
+              PDF · DOCX · TXT · MD · PNG · JPG
+            </span>
+          </span>
 
-      <button id="btn-analizar" class="hero-btn" disabled>Analizar documento</button>
+          <svg class="dropzone-marca" viewBox="0 0 64 80" aria-hidden="true" focusable="false">
+            <path class="dropzone-marca-hoja" d="M4 2h38l18 18v58H4z" />
+            <path class="dropzone-marca-pliegue" d="M42 2v18h18" />
+            <g class="dropzone-marca-renglones">
+              <path d="M16 34h32" /><path d="M16 44h32" /><path d="M16 54h20" />
+            </g>
+            <path class="dropzone-marca-tilde" d="M20 46l9 9 17-20" />
+          </svg>
+
+          <span class="dropzone-progreso" aria-hidden="true"><span class="dropzone-progreso-relleno"></span></span>
+        </label>
+
+        <p class="paso-mensaje" id="documento-mensaje" role="status" aria-live="polite"></p>
+        <button type="button" class="enlace-accion" id="btn-quitar" hidden>Quitar el archivo</button>
       </div>
-      <p id="estado" class="estado" role="status" aria-live="polite"></p>
-      <div id="barra-progreso-wrap" class="barra-progreso-wrap" hidden>
-        <div class="barra-progreso">
-          <div id="barra-progreso-relleno" class="barra-progreso-relleno"></div>
+    </li>
+
+    <!-- 02 ---------------------------------------------------------------- -->
+    <li class="paso">
+      <span class="paso-numero" aria-hidden="true">02</span>
+      <div class="paso-rotulo">
+        <h2 class="paso-titulo" id="titulo-jurisdiccion">Jurisdicción</h2>
+        <p class="paso-ayuda">
+          Elegí dónde presentar el proyecto.
+        </p>
+      </div>
+
+      <div class="paso-control">
+        <div class="jurisdicciones" role="radiogroup" aria-labelledby="titulo-jurisdiccion">
+          <label class="jurisdiccion">
+            <input type="radio" name="ambito" value="nacional" checked />
+            <span class="jurisdiccion-marca" aria-hidden="true"></span>
+            <span class="jurisdiccion-nombre">Congreso de la Nación</span>
+            <span class="jurisdiccion-detalle">71 reglas · Manual de Técnica Legislativa</span>
+          </label>
+
+          <label class="jurisdiccion">
+            <input type="radio" name="ambito" value="provincial" />
+            <span class="jurisdiccion-marca" aria-hidden="true"></span>
+            <span class="jurisdiccion-nombre">Legislatura de Entre Ríos</span>
+            <span class="jurisdiccion-detalle">31 reglas · Constitución y práctica</span>
+          </label>
+
+          <label class="jurisdiccion jurisdiccion--inactiva">
+            <input type="radio" name="ambito" value="municipal" disabled />
+            <span class="jurisdiccion-marca" aria-hidden="true"></span>
+            <span class="jurisdiccion-nombre">Concejo Deliberante de Entre Ríos</span>
+            <span class="jurisdiccion-detalle"><span class="jurisdiccion-estado">Próximamente</span> · concejos deliberantes</span>
+          </label>
         </div>
-        <span id="barra-progreso-texto" class="barra-progreso-texto">0%</span>
       </div>
-    </section>
+    </li>
 
-    <section class="panel" id="panel-resultados" tabindex="-1" hidden>
-      <p class="label">Resultado del análisis</p>
-      <div id="resumen" class="resumen"></div>
-
-      <div class="acciones" id="acciones">
-        <button type="button" id="btn-imprimir" class="btn-secundario">
-          Imprimir o guardar en PDF
-        </button>
-        <button type="button" id="btn-copiar" class="btn-secundario">
-          Copiar la lista
-        </button>
-        <span id="copiar-estado" class="copiar-estado" role="status" aria-live="polite"></span>
+    <!-- 03 ---------------------------------------------------------------- -->
+    <li class="paso">
+      <span class="paso-numero" aria-hidden="true">03</span>
+      <div class="paso-rotulo">
+        <h2 class="paso-titulo">Análisis de técnica legislativa</h2>
+        <p class="paso-ayuda">
+          No se revisa el contenido ni la constitucionalidad
+        </p>
       </div>
 
-      <div id="lista-control"></div>
-      <div id="lista-hallazgos"></div>
-      <div id="fuentes"></div>
-    </section>
-  </main>
+      <div class="paso-control">
+        <div id="bloque-cta">
+          <button id="btn-analizar" class="cta" disabled>
+            <span class="cta-texto">Analizar proyecto</span>
+            <svg class="cta-flecha" viewBox="0 0 24 12" aria-hidden="true" focusable="false">
+              <path d="M0 6h21M16 1l5 5-5 5" />
+            </svg>
+          </button>
 
-  <footer class="site-footer">
-    <img src="assets/neeti-logo.png" alt="NEETI" class="footer-logo" />
-    <p>Herramienta de análisis preliminar. No reemplaza revisión legal humana.</p>
-  </footer>
+          <p class="paso-nota">
+            El archivo se lee dentro de tu navegador: no se envía a ningún servidor.
+          </p>
+        </div>
 
-  <!-- Librerías de terceros (extracción de texto, todo corre en el navegador) -->
-  <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mammoth@1.7.0/mammoth.browser.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.0.4/dist/tesseract.min.js"></script>
+        <!-- Progreso del análisis: cuatro etapas con nombre, no un porcentaje suelto. -->
+        <div class="proceso" id="pantalla-proceso" hidden>
+          <ol class="etapas" id="etapas" aria-live="polite">
+            <li class="etapa" data-etapa="extraccion" data-estado="pendiente">
+              <span class="etapa-marca" aria-hidden="true"></span>
+              <span class="etapa-nombre">Documento procesado</span>
+              <span class="etapa-nota"></span>
+            </li>
+            <li class="etapa" data-etapa="estructura" data-estado="pendiente">
+              <span class="etapa-marca" aria-hidden="true"></span>
+              <span class="etapa-nombre">Estructura identificada</span>
+              <span class="etapa-nota"></span>
+            </li>
+            <li class="etapa" data-etapa="reglas" data-estado="pendiente">
+              <span class="etapa-marca" aria-hidden="true"></span>
+              <span class="etapa-nombre">Revisando técnica legislativa</span>
+              <span class="etapa-nota"></span>
+            </li>
+            <li class="etapa" data-etapa="informe" data-estado="pendiente">
+              <span class="etapa-marca" aria-hidden="true"></span>
+              <span class="etapa-nombre">Preparando observaciones</span>
+              <span class="etapa-nota"></span>
+            </li>
+          </ol>
 
-  <!-- Reglas -->
-  <script src="js/rules/nacional.js?v=32"></script>
-  <script src="js/rules/provincial-er.js?v=32"></script>
-  <script src="js/rules/municipal-er.js?v=32"></script>
-  <script src="js/rules/engine.js?v=32"></script>
+          <div class="proceso-detalle" id="proceso-detalle" hidden>
+            <p class="proceso-mensaje" id="proceso-mensaje"></p>
+            <div class="proceso-barra" id="proceso-barra" hidden>
+              <div class="proceso-barra-relleno" id="proceso-barra-relleno"></div>
+            </div>
+            <span class="proceso-porcentaje" id="proceso-porcentaje" hidden>0%</span>
+          </div>
 
-  <!-- App -->
-  <script src="js/extract.js?v=32"></script>
-  <script src="js/app.js?v=32"></script>
+          <div class="proceso-falla" id="proceso-falla" hidden>
+            <p class="proceso-falla-texto" id="proceso-falla-texto"></p>
+            <button type="button" class="enlace-accion" id="btn-reintentar">Volver a empezar</button>
+          </div>
+        </div>
+      </div>
+    </li>
+
+  </ol>
+</main>
+
+<!-- ========================================================================
+     Informe de revisión: documento a la izquierda, observaciones a la derecha.
+     ==================================================================== -->
+<section class="revision" id="pantalla-revision" hidden>
+
+  <!-- Barra del expediente: qué se analizó y qué se puede hacer con el informe. -->
+  <div class="revision-barra">
+    <p class="revision-expediente">
+      <span class="revision-archivo" id="revision-archivo"></span>
+      <span class="revision-datos" id="revision-datos"></span>
+      <span class="revision-fecha" id="revision-fecha"></span>
+    </p>
+
+    <span class="revision-aviso" id="copiar-estado" role="status" aria-live="polite"></span>
+
+    <!-- En el celular las acciones se agrupan detrás de este botón. -->
+    <button type="button" class="accion-menu" id="btn-menu" aria-haspopup="true"
+            aria-expanded="false" aria-controls="revision-acciones" aria-label="Más acciones">
+      <svg viewBox="0 0 20 4" aria-hidden="true" focusable="false">
+        <circle cx="2" cy="2" r="1.7" /><circle cx="10" cy="2" r="1.7" /><circle cx="18" cy="2" r="1.7" />
+      </svg>
+    </button>
+
+    <div class="revision-acciones" id="revision-acciones">
+      <button type="button" class="accion" id="btn-copiar">
+        <span class="accion-largo">Copiar informe</span>
+        <span class="accion-corto">Copiar</span>
+      </button>
+      <button type="button" class="accion" id="btn-imprimir">
+        <span class="accion-largo">Imprimir o guardar en PDF</span>
+        <span class="accion-corto">Imprimir</span>
+      </button>
+      <button type="button" class="accion accion--fuerte" id="btn-otro">Analizar otro documento</button>
+    </div>
+  </div>
+
+  <!-- Tablet vertical y celular: una vista por vez. -->
+  <div class="revision-pestanas" role="tablist" aria-label="Vistas de la revisión">
+    <button type="button" class="pestana" role="tab" id="pestana-documento"
+            aria-controls="panel-documento" aria-selected="false" data-vista="documento">
+      Documento
+    </button>
+    <button type="button" class="pestana" role="tab" id="pestana-observaciones"
+            aria-controls="panel-observaciones" aria-selected="true" data-vista="observaciones">
+      Informe <span class="pestana-cuenta" id="pestana-cuenta"></span>
+    </button>
+  </div>
+
+  <div class="revision-cuerpo" data-vista="observaciones">
+
+    <div class="panel-documento" id="panel-documento" role="tabpanel"
+         aria-labelledby="pestana-documento" tabindex="0">
+      <article class="hoja">
+        <p class="hoja-rotulo" id="hoja-rotulo"></p>
+        <div class="hoja-texto" id="hoja-texto"></div>
+      </article>
+
+      <!-- Tablet vertical y celular: después de saltar al fragmento. -->
+      <div class="volver" id="volver" hidden>
+        <button type="button" class="volver-boton" id="btn-volver">
+          <svg viewBox="0 0 16 12" aria-hidden="true" focusable="false"><path d="M15 6H2M6.5 1.5 2 6l4.5 4.5" /></svg>
+          Volver a la observación
+        </button>
+        <span class="volver-lugar" id="volver-lugar"></span>
+      </div>
+    </div>
+
+    <aside class="panel-observaciones" id="panel-observaciones" role="tabpanel"
+           aria-labelledby="pestana-observaciones" tabindex="-1">
+      <div class="informe-fijo" id="informe-cabecera"></div>
+      <div class="informe-intro" id="informe-intro"></div>
+      <p class="informe-cambio" id="informe-cambio" role="status" aria-live="polite" hidden></p>
+      <div id="informe-lista"></div>
+      <div id="informe-fuentes"></div>
+    </aside>
+
+  </div>
+</section>
+
+<footer class="pie">
+  <img src="assets/neeti-logo.png" alt="NEETI" class="pie-logo" />
+  <p class="pie-texto">
+    <span class="pie-contexto">Herramienta de análisis preliminar.</span>
+    No reemplaza la revisión legal humana.
+  </p>
+</footer>
+
+<!-- ========================================================================
+     Tutorial breve. Se abre solo la primera vez en cada pantalla y siempre
+     se puede saltar; después queda a mano en "Cómo funciona".
+     ==================================================================== -->
+<dialog class="tutorial" id="tutorial" aria-labelledby="tutorial-titulo">
+  <!-- El recuadro que ilumina el elemento del que habla cada paso: su sombra
+       enorme es la que oscurece todo lo demás. Va por debajo del cartel. -->
+  <div class="tutorial-foco" id="tutorial-foco" aria-hidden="true" hidden></div>
+
+  <div class="tutorial-panel">
+    <span class="tutorial-pico" id="tutorial-pico" aria-hidden="true"></span>
+
+    <p class="tutorial-contador" id="tutorial-contador"></p>
+
+    <div class="tutorial-cuerpo">
+      <span class="tutorial-numero" id="tutorial-numero" aria-hidden="true">01</span>
+      <div class="tutorial-texto-bloque">
+        <h2 class="tutorial-titulo" id="tutorial-titulo"></h2>
+        <p class="tutorial-texto" id="tutorial-texto"></p>
+      </div>
+    </div>
+
+    <div class="tutorial-pie">
+      <button type="button" class="tutorial-saltar" id="tutorial-saltar">Saltar tutorial</button>
+      <div class="tutorial-avance">
+        <button type="button" class="tutorial-atras" id="tutorial-atras" hidden>Atrás</button>
+        <button type="button" class="tutorial-siguiente" id="tutorial-siguiente" autofocus>Siguiente</button>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<!-- Librerías de terceros (extracción de texto, todo corre en el navegador) -->
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mammoth@1.7.0/mammoth.browser.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.0.4/dist/tesseract.min.js"></script>
+
+<!-- Reglas -->
+<script src="js/rules/categorias.js?v=40"></script>
+<script src="js/rules/nacional.js?v=40"></script>
+<script src="js/rules/provincial-er.js?v=40"></script>
+<script src="js/rules/municipal-er.js?v=40"></script>
+<script src="js/rules/engine.js?v=40"></script>
+
+<!-- App -->
+<script src="js/extract.js?v=40"></script>
+<script src="js/app.js?v=44"></script>
 </body>
 </html>

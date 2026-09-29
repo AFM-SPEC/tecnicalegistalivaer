@@ -50,7 +50,7 @@ const RuleEngine = (() => {
     let frag = texto.slice(inicio, fin).replace(/\s+/g, " ").trim();
     if (inicio > 0) frag = "…" + frag;
     if (fin < texto.length) frag = frag + "…";
-    citas.push({ frag, index });
+    citas.push({ frag, index, inicio, fin });
     return frag;
   }
 
@@ -118,6 +118,7 @@ const RuleEngine = (() => {
       if (esCitaDeArticulo(texto, m)) continue;
       crudos.push({
         index: m.index,
+        largo: m[0].length,
         tipo: "articulo",
         numero: parseInt(m[1], 10),
         sufijo: m[2] ? " " + m[2].toLowerCase() : "",
@@ -126,7 +127,12 @@ const RuleEngine = (() => {
 
     const reAnexo = /\banexo\s*([IVXLCDM]+|\d+)?\b/gi;
     for (const m of texto.matchAll(reAnexo)) {
-      crudos.push({ index: m.index, tipo: "anexo", etiquetaAnexo: m[1] ? m[1].toUpperCase() : "" });
+      crudos.push({
+        index: m.index,
+        largo: m[0].length,
+        tipo: "anexo",
+        etiquetaAnexo: m[1] ? m[1].toUpperCase() : "",
+      });
     }
 
     crudos.sort((a, b) => a.index - b.index);
@@ -135,13 +141,21 @@ const RuleEngine = (() => {
     let ultimoNumero = 0;
     for (const h of crudos) {
       if (h.tipo === "anexo") {
-        lista.push({ index: h.index, etiqueta: h.etiquetaAnexo ? `Anexo ${h.etiquetaAnexo}` : "Anexo" });
+        lista.push({
+          index: h.index,
+          largo: h.largo,
+          etiqueta: h.etiquetaAnexo ? `Anexo ${h.etiquetaAnexo}` : "Anexo",
+        });
         continue;
       }
       const esEncabezado = h.numero > ultimoNumero || (h.numero === ultimoNumero && h.sufijo);
       if (!esEncabezado) continue;
       ultimoNumero = h.numero;
-      lista.push({ index: h.index, etiqueta: `Artículo ${comoOrdinal(h.numero)}${h.sufijo}` });
+      lista.push({
+        index: h.index,
+        largo: h.largo,
+        etiqueta: `Artículo ${comoOrdinal(h.numero)}${h.sufijo}`,
+      });
     }
 
     return lista;
@@ -172,7 +186,7 @@ const RuleEngine = (() => {
       .replace(/^[…\.]+/, "")
       .replace(/[…\.]+$/, "")
       .trim();
-    if (limpio.length < 5) return -1;
+    if (limpio.length < 5) return null;
 
     const directo = texto.indexOf(limpio);
 
@@ -180,42 +194,52 @@ const RuleEngine = (() => {
     // solo la ubicamos si en todo el documento aparece una única vez. Si aparece
     // varias, señalar una sería adivinar.
     if (limpio.split(/\s+/).length < 2) {
-      if (directo === -1) return -1;
-      return texto.indexOf(limpio, directo + 1) === -1 ? directo : -1;
+      if (directo === -1) return null;
+      if (texto.indexOf(limpio, directo + 1) !== -1) return null;
+      return { inicio: directo, fin: directo + limpio.length };
     }
 
-    if (directo !== -1) return directo;
+    if (directo !== -1) return { inicio: directo, fin: directo + limpio.length };
 
     try {
       const patron = limpio.split(/\s+/).map(escaparRegex).join("\\s+");
       const m = texto.match(new RegExp(patron));
-      if (m) return m.index;
+      if (m) return { inicio: m.index, fin: m.index + m[0].length };
 
       // Último intento: comparar sin acentos ni mayúsculas. Solo sirve si
       // normalizar() no cambió el largo del texto; si lo cambió, las posiciones
       // ya no se corresponden y preferimos no mostrar una ubicación a mostrar
       // una equivocada.
       const plano = normalizar(texto);
-      if (plano.length !== texto.length) return -1;
+      if (plano.length !== texto.length) return null;
       const mPlano = plano.match(new RegExp(normalizar(limpio).split(/\s+/).map(escaparRegex).join("\\s+")));
-      return mPlano ? mPlano.index : -1;
+      return mPlano ? { inicio: mPlano.index, fin: mPlano.index + mPlano[0].length } : null;
     } catch (err) {
-      return -1;
+      return null;
     }
   }
 
-  /** Decide la ubicación de un ejemplo concreto. */
-  function ubicarEjemplo(texto, ejemplo, citasDeLaRegla, listaHitos) {
+  /**
+   * Decide dónde cae un ejemplo concreto: en qué parte del documento está y,
+   * cuando se puede, entre qué caracteres exactos del texto. El rango es lo que
+   * después permite resaltar el fragmento dentro del documento en pantalla.
+   */
+  function situarEjemplo(texto, ejemplo, citasDeLaRegla, listaHitos) {
     // 1) El ejemplo incluye un fragmento citado con contexto(): sabemos su posición exacta.
     for (const c of citasDeLaRegla) {
-      if (c.frag && ejemplo.includes(c.frag)) return ubicacionDe(c.index, listaHitos);
+      if (c.frag && ejemplo.includes(c.frag)) {
+        return {
+          ubicacion: ubicacionDe(c.index, listaHitos),
+          rango: { inicio: c.inicio, fin: c.fin },
+        };
+      }
     }
     // 2) El ejemplo trae texto entrecomillado: lo buscamos en el documento.
     for (const m of ejemplo.matchAll(/"([^"]{5,})"/g)) {
-      const i = buscarFragmento(texto, m[1]);
-      if (i !== -1) return ubicacionDe(i, listaHitos);
+      const rango = buscarFragmento(texto, m[1]);
+      if (rango) return { ubicacion: ubicacionDe(rango.inicio, listaHitos), rango };
     }
-    return "";
+    return { ubicacion: "", rango: null };
   }
 
   function getRulesFor(ambito) {
@@ -249,9 +273,14 @@ const RuleEngine = (() => {
       if (resultado && resultado.cumple === false) {
         const ejemplos = (resultado.ejemplos || []).map((e) => {
           const texto = String(e);
+          const sitio = situarEjemplo(text, texto, citasDeLaRegla, listaHitos);
           return {
             texto,
-            ubicacion: rule.ubicacionFija || ubicarEjemplo(text, texto, citasDeLaRegla, listaHitos),
+            ubicacion: rule.ubicacionFija || sitio.ubicacion,
+            // Dónde está el fragmento dentro del documento, para poder
+            // resaltarlo. Las reglas que señalan algo que falta no tienen
+            // fragmento que resaltar: ahí queda en null.
+            rango: sitio.rango,
           };
         });
 
@@ -266,6 +295,9 @@ const RuleEngine = (() => {
         hallazgos.push({
           id: rule.id,
           titulo: rule.titulo,
+          categoria: window.CategoriasReglas
+            ? window.CategoriasReglas.categoriaDe(rule.id)
+            : "otras",
           descripcion: rule.descripcion,
           sugerencia: rule.sugerencia || "",
           fuente: rule.fuente || "",
@@ -280,10 +312,22 @@ const RuleEngine = (() => {
     return {
       totalReglas: rules.length,
       hallazgos,
+      // Los artículos y anexos detectados, con su posición: la vista del
+      // documento los usa para marcar los encabezados y para saltar a ellos.
+      estructura: listaHitos,
     };
   }
 
-  return { analyze, normalizar };
+  /**
+   * Sólo la estructura del documento, sin correr las reglas. La pantalla de
+   * progreso la usa para poder decir cuántos artículos encontró antes de
+   * empezar la revisión.
+   */
+  function estructura(text, ambito) {
+    return hitos(text, ambito === "provincial" ? ordinalER : ordinal);
+  }
+
+  return { analyze, normalizar, estructura };
 })();
 
 window.RuleEngine = RuleEngine;
