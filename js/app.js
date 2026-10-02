@@ -104,6 +104,7 @@
     RECOMIENDA: "Directriz institucional",
     ACOSTUMBRA: "Práctica uniforme, no obligación",
     SUBSIDIARIO: "Criterio de estilo, no obligación provincial",
+    "REVISIÓN": "Aviso de revisión: requiere criterio jurídico",
   };
 
   /**
@@ -127,7 +128,8 @@
     nacional: {
       titulo: "De dónde salen estas reglas",
       intro:
-        "Las 71 reglas del ámbito nacional se tomaron de los dos textos de referencia en la materia:",
+        `Las ${(window.ReglasNacional || []).length} reglas del ámbito nacional se tomaron de los dos ` +
+        "textos de referencia en la materia:",
       lista: [
         '<strong>Manual de Técnica Legislativa</strong> — Digesto Jurídico Argentino, publicado por ' +
           'InfoLeg, publicado en <a class="enlace-fuente" href="https://www.infoleg.gob.ar/basehome/manualdetecnicalegislativa.html" ' +
@@ -140,7 +142,8 @@
     provincial: {
       titulo: "De dónde salen estas reglas",
       intro:
-        "Las 31 reglas se reconstruyeron a partir de fuentes de distinto peso, y por eso cada " +
+        `Las ${(window.ReglasProvincialER || []).length} reglas se reconstruyeron a partir de fuentes ` +
+        "de distinto peso, y por eso cada " +
         "observación aclara cuánto obliga:",
       lista: [
         "<strong>Constitución de la Provincia de Entre Ríos (2008)</strong> — sobre todo los artículos 130, 131 y 132. Es la única fuente que obliga por sí sola.",
@@ -169,14 +172,22 @@
           'InfoLeg en <a class="enlace-fuente" href="https://www.infoleg.gob.ar/basehome/manualdetecnicalegislativa.html" ' +
           'target="_blank" rel="noopener">https://www.infoleg.gob.ar/basehome/manualdetecnicalegislativa.html</a>, ' +
           "y doctrina especializada — criterio subsidiario, del que salen casi todas las reglas automáticas.",
-        "<strong>Reglamento Interno de cada Concejo Deliberante</strong> — todavía no se aplica: la " +
-          "fórmula de sanción, el artículo de cierre y las firmas dependen de cada municipio y no se revisan.",
+        "<strong>Reglamento Interno de cada Concejo Deliberante</strong> — todavía no se aplica. De la " +
+          "fórmula de sanción y del artículo de cierre sólo se revisa que estén: Entre Ríos tiene más de " +
+          "80 municipios y cada Concejo usa su propia fórmula, así que no se puede sugerir una única. " +
+          "Las firmas no se revisan.",
       ],
       cierre:
         "Ninguna observación es una obligación general de todos los municipios: son recomendaciones " +
-        "de estilo, y por eso ninguna pasa de prioridad media.",
+        "de estilo, salvo donde la etiqueta de cada una diga otra cosa.",
     },
   };
+
+  /** Se muestra en las fuentes de los tres ámbitos: es el mismo criterio para todos. */
+  const CRITERIO_PRIORIDAD =
+    "La prioridad sigue el mismo criterio en los tres ámbitos: alta si el error puede cambiar qué " +
+    "manda la norma, a quién o desde cuándo; media si dificulta identificarla, entenderla o citarla; " +
+    "baja si es de forma o estilo. Cuánto obliga cada regla se indica aparte, en cada observación.";
 
   const CATEGORIAS = (window.CategoriasReglas && window.CategoriasReglas.orden) || [];
 
@@ -753,6 +764,18 @@
       </div>`;
   }
 
+  /**
+   * Cuando el documento se presenta como un instrumento que la herramienta no
+   * revisa (resolución, decreto…). La revisión se hace igual: la detección del
+   * tipo puede fallar, y quien redacta decide qué le sirve.
+   */
+  function avisoInstrumento(analisis) {
+    return (
+      `Este documento parece ser ${analisis.instrumentoNoCubierto}. ${RuleEngine.ALCANCE} ` +
+      "La revisión se hizo igual, pero algunas observaciones pueden no corresponder a este tipo de instrumento."
+    );
+  }
+
   /** Lo que se lee antes de empezar: el alcance, cómo marcar y el aviso de prioridad alta. */
   function introHtml(analisis) {
     if (analisis.totalReglas === 0) return "";
@@ -760,6 +783,11 @@
     const conteo = conteoPorSeveridad(analisis.hallazgos);
 
     return `
+      ${
+        analisis.instrumentoNoCubierto
+          ? `<p class="informe-aviso informe-aviso--alcance">${escaparHtml(avisoInstrumento(analisis))}</p>`
+          : ""
+      }
       <p class="informe-nota">
         Son sugerencias de forma: corregir o no, y cómo, lo decide quien redacta la norma.
       </p>
@@ -957,6 +985,8 @@
       <details class="fuentes">
         <summary class="fuentes-summary">${f.titulo}</summary>
         <div class="fuentes-cuerpo">
+          <p class="fuentes-alcance">${RuleEngine.ALCANCE}</p>
+          <p class="fuentes-alcance">${CRITERIO_PRIORIDAD}</p>
           <p>${f.intro}</p>
           <ul class="fuentes-lista">${f.lista.map((x) => `<li>${x}</li>`).join("")}</ul>
           ${f.cierre ? `<p class="fuentes-cierre">${f.cierre}</p>` : ""}
@@ -1399,6 +1429,7 @@
       `Fecha del análisis: ${fecha}`,
       `${total} ${plural(total, "observación", "observaciones")} sobre ${analisis.totalReglas} reglas evaluadas.`,
       "",
+      analisis.instrumentoNoCubierto ? `ATENCIÓN: ${avisoInstrumento(analisis)}` : "",
       "Son sugerencias de forma: corregir o no, y cómo, lo decide quien redacta la norma.",
       "",
     ].filter((l) => l !== "");
@@ -1544,7 +1575,8 @@
         titulo: "Elegí dónde se presenta",
         texto:
           "Cada cuerpo legislativo tiene sus propias reglas de redacción, así que el " +
-          "informe cambia según lo que elijas.",
+          "informe cambia según lo que elijas. Se revisan solamente leyes nacionales, " +
+          "leyes provinciales y ordenanzas.",
       },
       {
         objetivo: "#bloque-cta",
@@ -1734,6 +1766,19 @@
   // ---------------------------------------------------------------------------
 
   estadoCarga("inicial");
+
+  // La cantidad de reglas de cada jurisdicción se calcula: así no queda vieja
+  // cuando se agregan o se quitan reglas.
+  const REGLAS_POR_AMBITO = {
+    nacional: window.ReglasNacional,
+    provincial: window.ReglasProvincialER,
+    municipal: window.ReglasMunicipalER,
+  };
+  document.querySelectorAll('input[name="ambito"]').forEach((input) => {
+    const detalle = input.closest(".jurisdiccion")?.querySelector(".jurisdiccion-detalle");
+    const reglas = REGLAS_POR_AMBITO[input.value];
+    if (detalle && reglas) detalle.innerHTML = detalle.innerHTML.replace(/\d+(&nbsp;|\u00a0)reglas/, `${reglas.length}&nbsp;reglas`);
+  });
 
   if (!tutorialVisto("carga")) {
     // Después del primer pintado, para que se vea la pantalla detrás.

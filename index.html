@@ -6,7 +6,7 @@
 <title>Revisor de Técnica Legislativa — NEETI</title>
 <meta
   name="description"
-  content="Revisá la técnica legislativa de un proyecto de ley nacional, de la Provincia de Entre Ríos o de un Concejo Deliberante entrerriano: devuelve una lista de correcciones de forma, con la fuente de cada regla."
+  content="Revisá la técnica legislativa de un proyecto de ley nacional o de la Provincia de Entre Ríos, o de un proyecto de ordenanza de un Concejo Deliberante entrerriano: devuelve una lista de correcciones de forma, con la fuente de cada regla."
 />
 <meta name="theme-color" content="#0b1d3a" />
 <link rel="icon" href="assets/neeti-logo.jpeg?v=2" />
@@ -16,7 +16,7 @@
   href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap"
   rel="stylesheet"
 />
-<link rel="stylesheet" href="css/style.css?v=59" />
+<link rel="stylesheet" href="css/style.css?v=60" />
 </head>
 <body data-fase="carga">
 
@@ -107,23 +107,28 @@
             <input type="radio" name="ambito" value="nacional" checked />
             <span class="jurisdiccion-marca" aria-hidden="true"></span>
             <span class="jurisdiccion-nombre">Congreso de la Nación</span>
-            <span class="jurisdiccion-detalle">71 reglas · Manual de Técnica Legislativa</span>
+            <span class="jurisdiccion-detalle">Proyectos de ley · 103&nbsp;reglas · Manual de Técnica Legislativa</span>
           </label>
 
           <label class="jurisdiccion">
             <input type="radio" name="ambito" value="provincial" />
             <span class="jurisdiccion-marca" aria-hidden="true"></span>
             <span class="jurisdiccion-nombre">Legislatura de Entre Ríos</span>
-            <span class="jurisdiccion-detalle">31 reglas · Constitución y práctica</span>
+            <span class="jurisdiccion-detalle">Proyectos de ley · 67&nbsp;reglas · Constitución y práctica</span>
           </label>
 
           <label class="jurisdiccion">
             <input type="radio" name="ambito" value="municipal" />
             <span class="jurisdiccion-marca" aria-hidden="true"></span>
             <span class="jurisdiccion-nombre">Concejo Deliberante de Entre Ríos</span>
-            <span class="jurisdiccion-detalle">53 reglas · Manual municipal</span>
+            <span class="jurisdiccion-detalle">Proyectos de ordenanza · 69&nbsp;reglas · Manual municipal</span>
           </label>
         </div>
+
+        <p class="alcance-nota" id="alcance-nota">
+          Revisa solamente leyes nacionales, leyes provinciales y ordenanzas. No revisa
+          resoluciones, decretos, comunicaciones, declaraciones, minutas ni pedidos de informes.
+        </p>
       </div>
     </li>
 
@@ -320,14 +325,17 @@
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.0.4/dist/tesseract.min.js"></script>
 
 <!-- Reglas -->
-<script src="js/rules/categorias.js?v=41"></script>
-<script src="js/rules/nacional.js?v=41"></script>
-<script src="js/rules/provincial-er.js?v=42"></script>
-<script src="js/rules/municipal-er.js?v=41"></script>
-<script src="js/rules/engine.js?v=41"></script>
+<script src="js/rules/categorias.js?v=44"></script>
+<script src="js/rules/base.js?v=2"></script>
+<script src="js/rules/comunes.js?v=2"></script>
+<script src="js/rules/prioridades.js?v=2"></script>
+<script src="js/rules/nacional.js?v=44"></script>
+<script src="js/rules/provincial-er.js?v=44"></script>
+<script src="js/rules/municipal-er.js?v=44"></script>
+<script src="js/rules/engine.js?v=44"></script>
 
 <!-- App -->
 <script src="js/extract.js?v=41"></script>
-<script src="js/app.js?v=45"></script>
+<script src="js/app.js?v=47"></script>
 </body>
 </html>

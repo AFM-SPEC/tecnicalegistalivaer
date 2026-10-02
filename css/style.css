@@ -303,6 +303,15 @@ body {
   color: var(--tinta-tenue);
 }
 
+/* Qué tipos de norma se revisan: tiene que leerse antes de subir nada. */
+.alcance-nota {
+  margin-top: var(--space-sm);
+  max-width: 64ch;
+  font-size: var(--t-sm);
+  line-height: 1.45;
+  color: var(--tinta-media);
+}
+
 .paso-mensaje {
   margin-top: var(--space-sm);
   font-size: var(--t-sm);
@@ -1531,6 +1540,13 @@ body[data-fase="revision"] {
   color: var(--tinta-media);
 }
 
+/* El documento no es una ley ni una ordenanza: no es una prioridad, así que
+   no lleva el color de "alta". */
+.informe-aviso--alcance {
+  border-left: 2px solid var(--tinta);
+  color: var(--tinta);
+}
+
 /* Cuando una observación resuelta sale del filtro en curso. */
 .informe-cambio {
   margin-top: 10px;
@@ -1941,6 +1957,8 @@ body[data-fase="revision"] {
 .fuentes-lista li::before { content: "— "; color: var(--tinta-tenue); }
 
 .fuentes-cierre { margin-top: 12px; }
+
+.fuentes-alcance { margin-bottom: 10px; color: var(--tinta); }
 
 .enlace-fuente { overflow-wrap: anywhere; }
 

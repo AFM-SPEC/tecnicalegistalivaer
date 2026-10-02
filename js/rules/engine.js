@@ -7,12 +7,14 @@
  *   id: 'nac-001',
  *   titulo: 'Fórmula de sanción presente',
  *   descripcion: 'Explicación de la regla y por qué importa.',
- *   severidad: 'alta' | 'media' | 'baja',
- *   autoridad: 'EXIGE' | ... ,   // opcional: lo usan las reglas provinciales y municipales
+ *   autoridad: 'EXIGE' | ... ,   // opcional: cuánto obliga la fuente (no la prioridad)
  *   sugerencia: 'Ejemplo concreto de cómo debería quedar el texto.',
  *   ubicacionFija: 'Al inicio, antes del Artículo 1°',  // opcional, ver abajo
  *   check(text, { normalizar, contexto, ordinal }) => { cumple: boolean, ejemplos?: string[] }
  * }
+ *
+ * La prioridad (alta, media, baja) no la define cada regla: sale de
+ * prioridades.js, con un mismo criterio para los tres ámbitos.
  *
  * UBICACIÓN DE CADA HALLAZGO
  * --------------------------
@@ -125,6 +127,22 @@ const RuleEngine = (() => {
       });
     }
 
+    // Los artículos escritos con palabras ("ARTÍCULO PRIMERO") o con el
+    // ordinal suelto ("Primero:"), y los que no tienen número ("Artículo
+    // siguiente:"), se reconocen igual que en las reglas (base.js).
+    if (window.BaseNormas) {
+      const limpio = window.BaseNormas.sinComillas(texto);
+      for (const a of window.BaseNormas.encabezadosDeArticulo(limpio)) {
+        if (a.forma === "cifra") continue; // ya los encontró reArticulo
+        crudos.push({ index: a.index, largo: 8, tipo: "articulo", numero: a.numero, sufijo: a.sufijo ? " " + a.sufijo : "" });
+      }
+      for (const a of window.BaseNormas.encabezadosSinNumero(limpio)) {
+        if (/\d/.test(a.texto)) continue; // "Artículo 8 o el que corresponda" ya cuenta como el 8
+        const etiqueta = a.texto.replace(/\s*[:.\-–—]+\s*$/, "").replace(/\s+/g, " ");
+        crudos.push({ index: a.index, largo: a.texto.length, tipo: "sinNumero", etiqueta: etiqueta[0].toUpperCase() + etiqueta.slice(1).toLowerCase() });
+      }
+    }
+
     const reAnexo = /\banexo\s*([IVXLCDM]+|\d+)?\b/gi;
     for (const m of texto.matchAll(reAnexo)) {
       crudos.push({
@@ -140,6 +158,10 @@ const RuleEngine = (() => {
     const lista = [];
     let ultimoNumero = 0;
     for (const h of crudos) {
+      if (h.tipo === "sinNumero") {
+        lista.push({ index: h.index, largo: h.largo, etiqueta: h.etiqueta });
+        continue;
+      }
       if (h.tipo === "anexo") {
         lista.push({
           index: h.index,
@@ -242,6 +264,10 @@ const RuleEngine = (() => {
     return { ubicacion: "", rango: null };
   }
 
+  // El alcance (qué tipos de instrumento se revisan) vive en base.js, porque
+  // también lo usan las reglas.
+  const { ALCANCE, instrumentoNoCubierto } = window.BaseNormas;
+
   function getRulesFor(ambito) {
     const sets = {
       nacional: window.ReglasNacional || [],
@@ -302,7 +328,8 @@ const RuleEngine = (() => {
           sugerencia: rule.sugerencia || "",
           fuente: rule.fuente || "",
           autoridad: rule.autoridad || "",
-          severidad: rule.severidad,
+          // La prioridad sale de prioridades.js: un solo criterio para los tres ámbitos.
+          severidad: window.PrioridadesReglas ? window.PrioridadesReglas.de(rule.id) : rule.severidad || "media",
           ejemplos,
           ubicaciones,
         });
@@ -312,6 +339,9 @@ const RuleEngine = (() => {
     return {
       totalReglas: rules.length,
       hallazgos,
+      // Si el documento se presenta como resolución, decreto, etc.: la revisión
+      // se hace igual, pero el informe lo advierte (ver ALCANCE).
+      instrumentoNoCubierto: instrumentoNoCubierto(text),
       // Los artículos y anexos detectados, con su posición: la vista del
       // documento los usa para marcar los encabezados y para saltar a ellos.
       estructura: listaHitos,
@@ -327,7 +357,7 @@ const RuleEngine = (() => {
     return hitos(text, ambito === "nacional" ? ordinal : ordinalER);
   }
 
-  return { analyze, normalizar, estructura };
+  return { analyze, normalizar, estructura, instrumentoNoCubierto, ALCANCE };
 })();
 
 window.RuleEngine = RuleEngine;
