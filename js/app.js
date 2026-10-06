@@ -172,6 +172,10 @@
           'InfoLeg en <a class="enlace-fuente" href="https://www.infoleg.gob.ar/basehome/manualdetecnicalegislativa.html" ' +
           'target="_blank" rel="noopener">https://www.infoleg.gob.ar/basehome/manualdetecnicalegislativa.html</a>, ' +
           "y doctrina especializada — criterio subsidiario, del que salen casi todas las reglas automáticas.",
+        "<strong>Técnica legislativa municipal. Cómo escribir correctamente una ordenanza municipal</strong> — " +
+          "Héctor Pérez Bourbon, Konrad Adenauer Stiftung y CIMA (2024). Doctrina, criterio subsidiario: de " +
+          "ahí salen las reglas sobre vigencia, modificaciones, derogaciones, epígrafes, palabras innecesarias " +
+          "y tiempos verbales. Donde choca con el Manual municipal, se sigue este cuadernillo.",
         "<strong>Reglamento Interno de cada Concejo Deliberante</strong> — todavía no se aplica. De la " +
           "fórmula de sanción y del artículo de cierre sólo se revisa que estén: Entre Ríos tiene más de " +
           "80 municipios y cada Concejo usa su propia fórmula, así que no se puede sugerir una única. " +
@@ -180,6 +184,25 @@
       cierre:
         "Ninguna observación es una obligación general de todos los municipios: son recomendaciones " +
         "de estilo, salvo donde la etiqueta de cada una diga otra cosa.",
+      // Lo que la herramienta no puede revisar: el decálogo de Pérez Bourbon
+      // (Técnica legislativa municipal, pp. 67-68) y los requisitos de calidad
+      // del contenido (pp. 19-24). Se muestra al final del informe.
+      revisar: {
+        titulo: "Antes de presentar el proyecto",
+        intro:
+          "Esto la herramienta no lo puede revisar: hace falta criterio jurídico o conocer el resto de " +
+          "las normas. Lo resume el decálogo de Pérez Bourbon (<em>Técnica legislativa municipal</em>, pp. 67-68).",
+        lista: [
+          "La decisión política que transmite la ordenanza está claramente definida, y es viable y oportuna.",
+          "El tema es competencia del municipio y no está ya regulado por otra norma.",
+          "El contenido respeta las normas de rango superior: Constitución, Ley Nº 10.027 y, si existe, la Carta Orgánica.",
+          "Corresponde una ordenanza y no una resolución, un decreto del Concejo, una comunicación o una declaración.",
+          "Está definido a qué personas alcanza la ordenanza y en qué territorio se aplica.",
+          "Incorporar la ordenanza no deja lagunas, redundancias ni contradicciones con otras normas.",
+          "Las normas que otras normas citan y que esta deroga o modifica siguen teniendo a dónde remitir.",
+          "Lo leyó alguien que no participó en la redacción, y lo entendió como se quiso escribir.",
+        ],
+      },
     },
   };
 
@@ -981,7 +1004,17 @@
   function fuentesHtml(ambito, analisis) {
     const f = FUENTES[ambito];
     if (!f || analisis.totalReglas === 0) return "";
-    return `
+    const revisar = f.revisar
+      ? `
+      <details class="fuentes">
+        <summary class="fuentes-summary">${f.revisar.titulo}</summary>
+        <div class="fuentes-cuerpo">
+          <p>${f.revisar.intro}</p>
+          <ul class="fuentes-lista">${f.revisar.lista.map((x) => `<li>${x}</li>`).join("")}</ul>
+        </div>
+      </details>`
+      : "";
+    return `${revisar}
       <details class="fuentes">
         <summary class="fuentes-summary">${f.titulo}</summary>
         <div class="fuentes-cuerpo">
@@ -1484,6 +1517,12 @@
     }
 
     const fuentes = FUENTES[ultimoAmbito];
+    if (fuentes && fuentes.revisar) {
+      lineas.push("".padEnd(60, "-"), fuentes.revisar.titulo.toUpperCase(), "".padEnd(60, "-"), "");
+      lineas.push(aTextoPlano(fuentes.revisar.intro), "");
+      for (const item of fuentes.revisar.lista) lineas.push(`[ ] ${item}`);
+      lineas.push("");
+    }
     if (fuentes) {
       lineas.push("".padEnd(60, "-"), fuentes.titulo.toUpperCase(), "".padEnd(60, "-"), "");
       lineas.push(aTextoPlano(fuentes.intro), "");

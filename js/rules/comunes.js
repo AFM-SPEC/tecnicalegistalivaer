@@ -353,7 +353,7 @@ window.ReglasComunes = (() => {
       check(text, { contexto }) {
         const cuerpo = cuerpoNormativo(text);
         const DISPONE = new RegExp(
-          `${RE_VERBO_NORMATIVO.source}|\\b(deber[áa]n?|deben?|tendr[áa]n?\\s+que|podr[áa]n?|queda(n)?\\s+prohibid[oa]s?|exceptu[áa]n?se|except[úu]a(n)?se)(?![a-záéíóúñ])|\\bse\\s+[a-záéíóúñ]+(?:ar|er|ir)[áÁ]n?(?![a-záéíóúñ])`,
+          `${RE_VERBO_NORMATIVO.source}|\\b(deber[áa]n?|deben?|tendr[áa]n?\\s+que|tienen?\\s+que|podr[áa]n?|pueden?|queda(n)?\\s+prohibid[oa]s?|exceptu[áa]n?se|except[úu]a(n)?se)(?![a-záéíóúñ])|\\bse\\s+[a-záéíóúñ]+(?:ar|er|ir)[áÁ]n?(?![a-záéíóúñ])`,
           "i"
         );
         const ej = [];
@@ -362,8 +362,12 @@ window.ReglasComunes = (() => {
           if (p.length < 300) continue;
           if (/\b[a-z]\)\s/.test(p) || /\b\d+\)\s/.test(p)) continue;
           const verbos = (p.match(new RegExp(RE_VERBO_NORMATIVO.source, "gi")) || []).length;
-          const decisiones = oraciones(p).filter((o) => DISPONE.test(o.texto)).length;
-          if ((p.length >= 400 && verbos >= 3) || decisiones >= 3) {
+          const frases = oraciones(p).filter((o) => o.texto.trim().split(/\s+/).length >= 8);
+          const decisiones = frases.filter((o) => DISPONE.test(o.texto)).length;
+          // Tres oraciones completas en un artículo suelen ser tres normas
+          // (Pérez Bourbon, Técnica legislativa municipal, p. 32).
+          const tresNormas = frases.length >= 3 && decisiones >= 2;
+          if ((p.length >= 400 && verbos >= 3) || decisiones >= 3 || tresNormas) {
             if (ej.length < 3) ej.push(contexto(text, t.index, 110));
           }
         }
@@ -456,7 +460,14 @@ window.ReglasComunes = (() => {
       ),
       check(text, { contexto }) {
         const cuerpo = soloArticulado(text);
-        const m = /disposici[óo]n(es)?\s+transitoria/i.exec(cuerpo);
+        // Sólo cuenta el rótulo de una división ("CAPÍTULO V - DISPOSICIONES
+        // TRANSITORIAS") o el epígrafe de un artículo ("ARTÍCULO 9°.- Disposición
+        // transitoria."). "Modifícanse las Disposiciones Transitorias de la
+        // Ordenanza…" habla de otra norma.
+        const ROTULO = /(?:CAP[ÍI]TULO|T[ÍI]TULO|SECCI[ÓO]N)\s+\S+\s*[-–—.:]?\s*$|[.:\-–—]\s*$|\n\s*$|^\s*$/;
+        const re = /disposici[óo]n(es)?\s+transitoria/gi;
+        let m;
+        while ((m = re.exec(cuerpo)) && !ROTULO.test(cuerpo.slice(Math.max(0, m.index - 30), m.index)));
         if (!m) return { cumple: true };
         if (posicionRelativa(cuerpo, m.index) >= 0.6) return { cumple: true };
         return {
@@ -616,7 +627,7 @@ window.ReglasComunes = (() => {
       check(text, { contexto }) {
         const cuerpo = cuerpoNormativo(text);
         const re =
-          /\bentr[a-záéíóú]*\s+en\s+vigencia|\bentrada\s+en\s+vigor|\bcomenzar[áa]n?\s+a\s+regir|\brige\s+(a\s+partir|desde)|\bregir[áa]n?\s+(a\s+partir|desde)|\btendr[áa]n?\s+vigencia|\bdesde\s+ahora\b/gi;
+          /\bentr[a-záéíóú]*\s+en\s+vigencia(?!\s+de\s+(?:la|el|los|las)\s+(?!presente))|\bentrada\s+en\s+vigor|\bcomenzar[áa]n?\s+a\s+regir|\brige\s+(a\s+partir|desde)|\bregir[áa]n?\s+(a\s+partir|desde)|\btendr[áa]n?\s+vigencia|\bdesde\s+ahora\b/gi;
         const lugares = [];
         let m;
         while ((m = re.exec(cuerpo))) {
@@ -786,8 +797,9 @@ window.ReglasComunes = (() => {
       check(text, { contexto }) {
         const cuerpo = cuerpoNormativo(text);
         // El punto de "Nº 1.234" no corta la frase: sólo el que no va seguido de un dígito.
-        const re = /\bincorp[óo]r[ae]n?se\b(?:[^.]|\.(?=\d)){0,200}/gi;
-        const refNorma = /\b(ley|ordenanza|decreto|resoluci[óo]n)\s*n?[°ºo]?\.?\s*[\d.\/]{2,9}/i;
+        const re = /\b(?:incorp[óo]r|incl[úu]y|agr[ée]gu?)[ae]n?se\b(?:[^.]|\.(?=\d)){0,200}/gi;
+        const refNorma =
+          /\b(ley|ordenanza|decreto|resoluci[óo]n)\s*n?[°ºo]?\.?\s*[\d.\/]{2,9}|\bc[óo]digo\s+[A-ZÁÉÍÓÚ]|\bcarta\s+org[áa]nica/i;
         const ubica =
           /\bcomo\s+(nuevo\s+|nueva\s+|el\s+|la\s+)?(art[íi]culo|inciso|apartado|p[áa]rrafo|punto|cap[íi]tulo|t[íi]tulo|secci[óo]n|anexo)|\b(al|el|en\s+el|del)\s+(art[íi]culo|inciso|apartado|cap[íi]tulo)\s+\d/i;
         const ej = [];
@@ -996,7 +1008,10 @@ window.ReglasComunes = (() => {
         'La norma manda en presente: "El Registro funciona en…", no "funcionará". El futuro hace ' +
         'dudar de si la disposición ya rige o regirá más adelante. "Deberá" y "podrá" no se ' +
         "cuentan: son la forma habitual de expresar el mandato y la facultad.",
-      sugerencia: 'Pasar los verbos a presente: "tendrán" → "tienen", "será" → "es".',
+      sugerencia:
+        'Pasar los verbos a presente sin perder el mandato: "será" → "es", pero "reglamentará" → ' +
+        '"<em>debe</em> reglamentar". "El Departamento Ejecutivo reglamenta…" sólo describe un hecho; ' +
+        '"debe reglamentar" lo obliga.',
       fuentes: fuentes(NAC("regla 20, punto 1"), MUN("MUN-049")),
       check(text, { contexto }) {
         const cuerpo = cuerpoNormativo(text);
@@ -1646,7 +1661,7 @@ window.ReglasComunes = (() => {
         const cuerpo = cuerpoNormativo(text);
         const TIPOS = [
           ["la derogación", /\bder[óo]g\w*se\b|\bd[ée]ja(n)?se\s+sin\s+efecto\b/i],
-          ["la vigencia", /\bentr[a-záéíóú]*\s+en\s+vigencia|\bentrada\s+en\s+vigor|\bvigencia\s+a\s+partir|\brige\s+(a\s+partir|desde)|\bregir[áa]n?\s+(a\s+partir|desde)/i],
+          ["la vigencia", /\bentr[a-záéíóú]*\s+en\s+vigencia(?!\s+de\s+(?:la|el|los|las)\s+(?!presente))|\bentrada\s+en\s+vigor|\bvigencia\s+a\s+partir|\brige\s+(a\s+partir|desde)|\bregir[áa]n?\s+(a\s+partir|desde)/i],
           ["el cierre", /\b(comun[íi]quese|publ[íi]quese|reg[íi]strese|arch[íi]vese|notif[íi]quese|c[úu]mplase)\b|\bde\s+forma\s*[.\-]/i],
         ];
         const ej = [];
@@ -1739,6 +1754,32 @@ window.ReglasComunes = (() => {
     },
   ];
 
+  /**
+   * Páginas de Pérez Bourbon, "Técnica legislativa municipal" (KAS–CIMA, 2024),
+   * que respaldan reglas comunes. Se agregan a la fuente en el ámbito municipal.
+   */
+  const PEREZ_BOURBON = {
+    "com-002": "p. 30",
+    "com-009": "pp. 32-33",
+    "com-010": "p. 31",
+    "com-016": "pp. 48-49",
+    "com-018": "p. 51",
+    "com-019": "p. 51",
+    "com-020": "p. 54",
+    "com-026": "pp. 44-45",
+    "com-028": "p. 41",
+    "com-030": "pp. 25-26",
+    "com-044": "pp. 38-40",
+    "com-045": "p. 56",
+    "com-050": "pp. 51-52",
+    "com-051": "pp. 51-53",
+    "com-053": "p. 54",
+  };
+  const conPerezBourbon = (id, ambito, texto) =>
+    ambito === "municipal" && PEREZ_BOURBON[id]
+      ? `${texto} · Pérez Bourbon, Técnica legislativa municipal (KAS–CIMA, 2024), ${PEREZ_BOURBON[id]}`
+      : texto;
+
   /** Un texto puede ser uno solo o uno por ámbito. */
   const porAmbito = (valor, ambito) => (valor && typeof valor === "object" ? valor[ambito] : valor);
 
@@ -1749,7 +1790,7 @@ window.ReglasComunes = (() => {
       titulo: porAmbito(r.titulo, ambito),
       descripcion: porAmbito(r.descripcion, ambito),
       sugerencia: porAmbito(r.sugerencia, ambito),
-      fuente: r.fuentes[ambito],
+      fuente: conPerezBourbon(r.id, ambito, r.fuentes[ambito]),
       autoridad: r.revision ? "REVISIÓN" : (r.autoridad && r.autoridad[ambito]) || (ambito === "nacional" ? undefined : "SUBSIDIARIO"),
       ubicacionFija: r.ubicacionFija,
       check: (text, util) => r.check(text, { ...util, ambito }),

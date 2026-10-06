@@ -113,6 +113,9 @@ const RuleEngine = (() => {
    */
   function hitos(texto, comoOrdinal = ordinal) {
     const crudos = [];
+    // Un "ARTÍCULO 168 bis" entre comillas es texto de otra norma, no un
+    // artículo del proyecto: se busca sobre el texto sin lo citado.
+    if (window.BaseNormas) texto = window.BaseNormas.sinComillas(texto);
 
     const reArticulo =
       /\bart(?:[íi]culo|\.)\s*(\d+)\s*[°ºo]?\s*(bis|ter|quater|quinquies|sexies|septies)?/gi;

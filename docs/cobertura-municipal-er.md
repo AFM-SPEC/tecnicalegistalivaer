@@ -41,12 +41,12 @@ pasar de media a ninguna regla subsidiaria. Reparto en el ámbito municipal: ver
 | Regla del Manual | Estado |
 |---|---|
 | MUN-013 Falta la cláusula de vigencia | **CUBIERTA** (er-mun-019). No se aplica si el documento dice ser otro instrumento (resolución, decreto…) |
-| MUN-022 Título vacío (lista cerrada) | **CUBIERTA** (com-002) |
+| MUN-022 Título vacío (lista cerrada) | **CUBIERTA** (com-002 título que no informa, er-mun-077 título de más de quince palabras) |
 | MUN-026 Fundamentos intercalados | **CUBIERTA** (com-003) |
 | MUN-031 Numeración de artículos | **CUBIERTA** (com-004 secuencia, com-005 artículos sin número, com-006 grafía, com-007 separador). Reconoce artículos con cifra ("ARTÍCULO 1°", "Art. 1º"), con palabras ("ARTÍCULO PRIMERO") y el ordinal suelto ("Primero:") |
 | MUN-032 Artículos bis y ter | **CUBIERTA** (com-049) |
 | MUN-034 Jerarquía de divisiones | **CUBIERTA** (com-010). Cuenta también el primer capítulo, que va antes del Artículo 1° (antes se lo salteaba y avisaba "un solo capítulo" en normas con dos) |
-| MUN-035 Denominación de divisiones | **NO IMPLEMENTADA** — al extraer un PDF se pierden los saltos de línea, y sin ellos no se distingue el nombre del capítulo del texto que sigue |
+| MUN-035 Denominación de divisiones | **CUBIERTA** parcialmente (er-mun-079) — avisa el capítulo, título o sección sin nombre. La uniformidad entre los nombres no se revisa: al extraer un PDF se pierden los saltos de línea |
 | MUN-036 Incisos | **CUBIERTA** (com-046) — salto o repetición de letras |
 | MUN-037 Viñetas y guiones | **CUBIERTA** (com-011) |
 | MUN-039 Anexo sin mención | **CUBIERTA** (com-013) |
@@ -116,6 +116,69 @@ revisión: requiere criterio jurídico*.
 | MUN-053 Términos jurídicos y técnicos | **AVISO DE REVISIÓN** (com-043) — expresiones coloquiales de lista cerrada |
 | MUN-055 Consistencia terminológica | **CUBIERTA** parcialmente (er-mun-056) — "Poder Ejecutivo" o "Intendente" en lugar de Departamento Ejecutivo |
 
+## Técnica legislativa municipal (Pérez Bourbon, 2024)
+
+Reglas tomadas de *Técnica legislativa municipal. Cómo escribir correctamente
+una ordenanza municipal*, de Héctor Pérez Bourbon (Konrad Adenauer Stiftung y
+CIMA, 2024). Es doctrina: criterio subsidiario, igual que el Manual de InfoLeg.
+Ficha de la fuente: [fuentes/municipal-er/PEREZ_BOURBON_2024.md](fuentes/municipal-er/PEREZ_BOURBON_2024.md).
+
+**Decisión del proyecto.** Donde el cuadernillo choca con el Manual municipal
+entrerriano, se sigue el cuadernillo:
+
+| Tema | Manual municipal ER | Ahora |
+|---|---|---|
+| Epígrafes | No avisar (MUN-033, sección 16 ter) | er-mun-078 avisa si la mayoría de los artículos no tiene epígrafe (prioridad baja) |
+| "Deberá" | Forma habitual del mandato (MUN-049) | er-mun-074 sugiere "debe" y "puede" (prioridad baja) |
+| Sinónimos | Revisión humana (MUN-056) | er-mun-068, aviso de revisión con una lista cerrada de pares |
+| Tipo de instrumento | No juzgarlo (MUN-002) | er-mun-076, aviso de revisión ante frases concretas |
+| Frases largas | No avisar (MUN-046, sección 16 ter) | er-mun-080 avisa oraciones de más de setenta palabras (prioridad baja) |
+
+| Regla | Qué detecta | Páginas |
+|---|---|---|
+| er-mun-057 | Vigencia desde la sanción o la aprobación, antes de que la ordenanza exista | 48-49 |
+| er-mun-058 | Modificación que no dice qué norma modifica | 51 |
+| er-mun-059 | Modificación de un párrafo o una frase suelta, no del artículo completo | 52, 54 |
+| er-mun-060 | Modificación de una norma modificatoria en lugar de la original | 52-53 |
+| er-mun-061 | Derogación que depende de un hecho futuro | 55 |
+| er-mun-062 | Cita del Código Civil o del Código de Comercio, derogados en 2015 | 56 |
+| er-mun-063 | Verbo en singular con objeto en plural ("Modifícase las…") | 51 |
+| er-mun-064 | La misma norma derogada dos veces en una lista | 55 |
+| er-mun-065 | "Por esta única vez" (aviso de revisión) | 54 |
+| er-mun-066 | La misma disposición repetida en dos artículos (redundancia) | 62 |
+| er-mun-067 | "Progenitores" y "conviviente" (aviso de revisión) | 43-44 |
+| er-mun-068 | Sinónimos para lo mismo (aviso de revisión) | 36-37 |
+| er-mun-069 | "Requerir": pedir o necesitar (aviso de revisión) | 37-38 |
+| er-mun-070 | Oración subordinada que agrega otra norma (aviso de revisión) | 40-41 |
+| er-mun-071 | Una norma que crea algo sin reglamentación, o reglamentación sin plazo (aviso de revisión) | 45, 50 |
+| er-mun-072 | Palabras innecesarias ("queda expresamente prohibido") | 42 |
+| er-mun-073 | Palabras rebuscadas ("cánidos", "especie arbórea") | 26 |
+| er-mun-074 | "Deberá" y "podrá" en lugar de "debe" y "puede" | 44-45 |
+| er-mun-075 | Ámbito de aplicación no definido (normas de cinco artículos o más) | 67 (decálogo, punto 5) |
+| er-mun-076 | Decisiones que suelen ir por otro instrumento (aviso de revisión) | 23-24, 67 (decálogo, punto 4) |
+| er-mun-077 | Título de más de quince palabras | 30 |
+| er-mun-078 | Artículos sin epígrafe | 31-32 |
+| er-mun-079 | Capítulo, título o sección sin nombre | 31 |
+| er-mun-080 | Oración de más de setenta palabras | 40-41 |
+
+Además, el cuadernillo cambió reglas comunes (en todos los ámbitos):
+
+- **com-009** (varias decisiones en un artículo) cuenta también los verbos en
+  presente y avisa los artículos con tres oraciones completas (p. 32).
+- **com-026** (futuro) sugiere "debe reglamentar" en lugar de "reglamenta",
+  porque el presente solo describe (p. 45).
+- **com-050** (incorporación sin ubicación) reconoce "Inclúyese" y "Agrégase" y
+  las incorporaciones a un código o a una carta orgánica (pp. 51-52).
+
+Y dejó a la vista cuatro errores, ya corregidos: "la entrada en vigencia de la
+reglamentación" se tomaba como la vigencia de la norma (com-017 y com-056); una
+mención a las disposiciones transitorias de otra norma se tomaba como las
+propias (com-012); y un artículo citado entre comillas desplazaba la ubicación
+de todos los avisos siguientes.
+
+En el ámbito municipal, las reglas comunes que el cuadernillo respalda citan
+también la página correspondiente.
+
 ## Fórmulas que dependen de cada Concejo (decisión del proyecto)
 
 El Manual pide no controlar estas dos reglas sin la ficha local del municipio
@@ -139,20 +202,27 @@ cada Concejo usa su propia fórmula, no se puede sugerir una única.
   sólo se revisa que la fórmula esté (ver la sección anterior).
 - **Revisión humana** (sección 17 del Manual): competencia, trámite,
   mayorías, presupuesto, contenido material y las reglas que obligarían a
-  adivinar sin una frase concreta (MUN-033, 046, 068, 079, 106). Los casos con
-  una frase reconocible tienen un aviso de revisión (ver la sección anterior).
+  adivinar sin una frase concreta (MUN-068, 079, 106). Los casos con una frase
+  reconocible tienen un aviso de revisión (ver las secciones anteriores). Al
+  final del informe municipal, la lista "Antes de presentar el proyecto"
+  recuerda lo que hay que revisar a mano (decálogo de Pérez Bourbon).
 - **Nivel de confianza** (secciones 6 y 24 del Manual): el motor todavía no
   tiene un campo para indicar confianza alta, media o baja en cada aviso.
 
 ## Cómo se probó
 
 - `docs/ejemplo-de-prueba-municipal-er.txt`: proyecto con errores a propósito.
-  Produce 36 avisos.
+  Produce 40 avisos.
+- `docs/ejemplo-perez-bourbon.txt`: los ejemplos de errores del cuadernillo de
+  Pérez Bourbon, armados como una ordenanza. Produce 23 avisos, cada uno en el
+  artículo donde está el error.
 - `docs/ejemplo-mal-redactado.txt`: texto extraído de un PDF con errores a
-  propósito, sin numeración ni estructura reconocible. Produce 27 avisos en el
+  propósito, sin numeración ni estructura reconocible. Produce 30 avisos en el
   ámbito municipal (y las mismas reglas comunes en los otros dos ámbitos).
-- `docs/ejemplo-limpio-municipal-er.txt`: ordenanza bien redactada. Produce
-  0 avisos: sirve para detectar falsos positivos cuando se toque una regla.
+- `docs/ejemplo-limpio-municipal-er.txt`: ordenanza bien redactada, que cumple
+  también lo que pide Pérez Bourbon (epígrafes, ámbito de aplicación,
+  reglamentación con plazo). Produce 0 avisos: sirve para detectar falsos
+  positivos cuando se toque una regla.
 - Los dos ejemplos tienen fórmula de sanción y artículo de cierre, así que
   er-mun-054 y er-mun-055 no avisan en ellos. Para probarlas, borrar una de
   las dos fórmulas del ejemplo limpio: tiene que aparecer exactamente ese aviso.
