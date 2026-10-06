@@ -4,3 +4,7 @@
 # Copias de seguridad manuales hechas antes de un cambio.
 # Se quedan en el disco como red extra, pero el historial ya está en git.
 *.bak
+
+# Ejemplo de prueba armado con pasajes del cuadernillo de Pérez Bourbon, que
+# prohíbe su reproducción. El repositorio es público: se queda sólo en el disco.
+docs/ejemplo-perez-bourbon.txt

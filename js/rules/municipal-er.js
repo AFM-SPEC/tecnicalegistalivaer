@@ -166,7 +166,7 @@ window.ReglasMunicipalER = (() => {
         if (!encabezadosDeArticulo(sinComillas(text)).length) {
           ej.push("No se encontraron artículos numerados.");
         }
-        if (!/fundamento|considerando|exposici[óo]n\s+de\s+motivos/i.test(text)) {
+        if (!/fundament(?:o|aci[óo]n)|considerando|exposici[óo]n\s+de\s+motivos/i.test(text)) {
           ej.push("No se encontró un bloque de fundamentos ni de considerandos.");
         }
         if (!ej.length) return { cumple: true };
@@ -194,8 +194,12 @@ window.ReglasMunicipalER = (() => {
         if (!esOrdenanza(text)) return { cumple: true };
         const cuerpo = soloArticulado(text);
         if (!cuerpo.trim()) return { cumple: true };
+        // Basta con que la cláusula esté, aunque sea imprecisa ("regirá
+        // oportunamente"): eso lo marca com-016, y decir además que no hay
+        // cláusula sería contradecirlo. Por eso reconoce al menos las palabras
+        // con que com-016 la encuentra, en cualquier tiempo y número.
         const vigencia =
-          /vigencia|entrada\s+en\s+vigor|entrar[áa]\s+en\s+vigor|(comenzar[áa]|comienza|empezar[áa])\s+a\s+regir|\brige\s+(a\s+partir|desde)|regir[áa]\s+(a\s+partir|desde)|surt(e|ir[áa])\s+efecto|a\s+partir\s+de\s+(la\s+fecha\s+de\s+)?su\s+(promulgaci[óo]n|publicaci[óo]n|sanci[óo]n)/i;
+          /vigencia|\bvigor\b|\bri(?:ge|gen)\b|\bregir(?:[áa]n?)?(?![a-záéíóúñ])|surt(?:e|en|ir[áa]n?)\s+efecto|a\s+partir\s+de\s+(la\s+fecha\s+de\s+)?su\s+(promulgaci[óo]n|publicaci[óo]n|sanci[óo]n)/i;
         if (vigencia.test(cuerpo)) return { cumple: true };
         return { cumple: false, ejemplos: ["El articulado no contiene una cláusula de vigencia reconocible."] };
       },

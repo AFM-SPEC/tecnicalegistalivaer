@@ -175,7 +175,7 @@ Cantidad de observaciones en cada ejemplo:
 
 | Documento | Ámbito | Observaciones |
 |---|---|---|
-| `docs/ejemplo-perez-bourbon.txt` | municipal | 23 |
+| `docs/ejemplo-perez-bourbon.txt` (sólo local, ver abajo) | municipal | 23 |
 | `docs/ejemplo-mal-redactado.txt` | nacional | 28 |
 | `docs/ejemplo-mal-redactado.txt` | provincial | 26 |
 | `docs/ejemplo-mal-redactado.txt` | municipal | 30 |
@@ -184,6 +184,9 @@ Cantidad de observaciones en cada ejemplo:
 | `docs/ejemplo-de-prueba-provincial-er.txt` | provincial | 24 |
 | `docs/ejemplo-de-prueba-nacional.txt` | nacional | 21 |
 | `docs/ejemplo-de-prueba-nacional-2.txt` | nacional | 26 |
+| `docs/ejemplo-rompe-todo-nacional.txt` | nacional | 103 de 103 |
+| `docs/ejemplo-rompe-todo-provincial-er.txt` | provincial | 65 de 67 |
+| `docs/ejemplo-rompe-todo-municipal-er.txt` | municipal | 91 de 93 |
 
 - `ejemplo-mal-redactado.txt` es el texto que la herramienta extrae de un PDF
   escrito con errores a propósito (una sola línea, como queda al leer un PDF).
@@ -191,6 +194,17 @@ Cantidad de observaciones en cada ejemplo:
   del mismo documento da exactamente las mismas observaciones.
 - `ejemplo-limpio-municipal-er.txt` tiene que seguir dando **0**: sirve para
   detectar falsos positivos.
+- Los `ejemplo-rompe-todo-*.txt` incumplen todas las reglas de su ámbito que
+  pueden fallar juntas. Las que faltan se excluyen por lógica: no puede faltar
+  la fórmula de sanción (er-prov-001) y a la vez estar mal escrita (er-prov-002
+  y 003), ni faltar el cierre (er-prov-015) y a la vez ser el de un decreto
+  (er-prov-016), ni faltar el CONSIDERANDO de una iniciativa popular
+  (er-mun-007) y a la vez tener un mandato adentro (er-mun-005), ni faltar la
+  cláusula de vigencia (er-mun-019) y a la vez ser imprecisa (com-016). Si
+  uno de estos ejemplos baja de esos números, una regla dejó de detectar algo.
+- `ejemplo-perez-bourbon.txt` no está en el repositorio: reúne pasajes del
+  cuadernillo de Pérez Bourbon, que prohíbe su reproducción, y el repositorio es
+  público. Se conserva sólo en el disco (está en `.gitignore`).
 - Además, las reglas comunes se pasaron por 78 leyes entrerrianas sancionadas,
   extraídas de los Boletines Oficiales de `manual-tecnica-legislativa-er/fuentes/leyes`,
   para revisar a mano cada aviso nuevo y descartar los falsos (firmas tomadas

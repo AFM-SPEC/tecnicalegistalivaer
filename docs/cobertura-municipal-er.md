@@ -215,7 +215,13 @@ cada Concejo usa su propia fórmula, no se puede sugerir una única.
   Produce 40 avisos.
 - `docs/ejemplo-perez-bourbon.txt`: los ejemplos de errores del cuadernillo de
   Pérez Bourbon, armados como una ordenanza. Produce 23 avisos, cada uno en el
-  artículo donde está el error.
+  artículo donde está el error. Sólo existe en el disco, no en el repositorio:
+  reproduce pasajes del cuadernillo, que lo prohíbe.
+- `docs/ejemplo-rompe-todo-municipal-er.txt`: una ordenanza que incumple 91 de
+  las 93 reglas. Las dos que faltan no pueden fallar con las demás: er-mun-007
+  pide que no haya CONSIDERANDO y er-mun-005 revisa lo que hay adentro;
+  er-mun-019 pide que no haya cláusula de vigencia y com-016 y er-mun-057
+  revisan cómo está escrita.
 - `docs/ejemplo-mal-redactado.txt`: texto extraído de un PDF con errores a
   propósito, sin numeración ni estructura reconocible. Produce 30 avisos en el
   ámbito municipal (y las mismas reglas comunes en los otros dos ámbitos).

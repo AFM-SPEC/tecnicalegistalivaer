@@ -114,7 +114,13 @@ window.ReglasNacional = [
     ubicacionFija: "Al final, junto a las disposiciones finales",
     check(text, { normalizar, contexto }) {
       const t = normalizar(text);
-      const cumple = /entrar[aá] en vigencia|rige a partir de|vigencia a partir|entrada en vigor/.test(t);
+      // En cualquier tiempo y número: "entra en vigencia", "entrarán en vigor",
+      // "rigen desde", "comienza a regir". Una cláusula que no fija el momento
+      // ("regirá oportunamente") no cuenta: ahí rige el plazo general del art. 5°.
+      const cumple =
+        /\bentra(n|ra|ran)?\s+en\s+(vigencia|vigor)|\bentrada\s+en\s+(vigencia|vigor)|\bvigencia\s+a\s+partir|\b(rige|rigen|regira|regiran)\s+(a\s+partir|desde)|\b(comienza|comenzara|empieza|empezara)n?\s+a\s+regir|\btendran?\s+vigencia\s+(a\s+partir|desde)/.test(
+          t
+        );
       if (cumple) return { cumple: true };
       return {
         cumple: false,

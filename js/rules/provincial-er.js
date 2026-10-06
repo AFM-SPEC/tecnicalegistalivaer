@@ -47,22 +47,12 @@ window.ReglasProvincialER = (() => {
   // ---------------------------------------------------------------------------
   // Utilidades comunes
   //
-  // Todas devuelven cadenas del MISMO largo que el texto original: lo que se
-  // descarta se reemplaza por espacios. Así las posiciones siguen coincidiendo
-  // y contexto(text, m.index) cita el lugar correcto del documento.
+  // El articulado se recorta igual que en las reglas comunes (base.js): sin el
+  // preámbulo, los fundamentos ni los anexos, y con los artículos que siguen a
+  // unos fundamentos intercalados por error.
   // ---------------------------------------------------------------------------
 
-  const blancos = (n) => " ".repeat(Math.max(0, n));
-
-  /**
-   * Borra lo que esté entre comillas. En una ley modificatoria el texto nuevo
-   * va entrecomillado y trae adentro sus propios "ARTÍCULO n.-", que no son
-   * artículos del proyecto sino del texto que se está sustituyendo. Si no se
-   * los saca, la revisión los cuenta dos veces.
-   */
-  function sinComillas(texto) {
-    return texto.replace(/[“"«][^”"»]{0,4000}[”"»]/g, (m) => blancos(m.length));
-  }
+  const { soloArticulado, cuerpoNormativo } = window.BaseNormas;
 
   /** Junta todo sin espacios: reconoce la fórmula aunque el PDF la haya partido. */
   function pegado(texto) {
@@ -73,32 +63,7 @@ window.ReglasProvincialER = (() => {
       .replace(/\s+/g, "");
   }
 
-  // Sólo en mayúsculas: así es como se escribe el encabezado del bloque. Si se
-  // buscara sin distinguir, la palabra "fundamentos" dentro de una oración
-  // cualquiera partiría el documento en dos por error.
-  const RE_FUNDAMENTOS = /\bFUNDAMENTOS\b|\bFUNDAMENTACI[ÓO]N\b/;
   const RE_FORMULA_NACIONAL = /el\s+senado\s+y\s+(la\s+)?c[áa]mara\s+de\s+diputados/i;
-  const RE_SANCION = /sanciona(?:n)?\s+con\s+fuerza\s+de\s+ley/i;
-
-  /**
-   * Deja sólo el articulado, en blanco el resto.
-   *
-   * Los fundamentos pueden ir después del articulado (práctica de Diputados) o
-   * antes (práctica del Senado). Se distingue por dónde cae la fórmula de
-   * sanción: lo que está del lado de la fórmula es el articulado.
-   */
-  function soloArticulado(texto) {
-    const fund = RE_FUNDAMENTOS.exec(texto);
-    if (!fund) return texto;
-    const sancion = RE_SANCION.exec(texto);
-    if (sancion && sancion.index > fund.index) {
-      return blancos(sancion.index) + texto.slice(sancion.index);
-    }
-    return texto.slice(0, fund.index) + blancos(texto.length - fund.index);
-  }
-
-  /** El cuerpo normativo limpio: sin fundamentos y sin textos citados. */
-  const cuerpoNormativo = (texto) => sinComillas(soloArticulado(texto));
 
   /**
    * ¿Es una ley ya sancionada y no un proyecto? Se reconoce por las marcas de
@@ -107,119 +72,6 @@ window.ReglasProvincialER = (() => {
    */
   function esLeySancionada(texto) {
     return /SALA\s+DE\s+SESIONES|POR\s+TANTO\s*:/i.test(texto);
-  }
-
-  /**
-   * Junta ejemplos evitando citar dos veces la misma frase.
-   *
-   * Cuando dos defectos caen muy cerca ("Visto que… y considerando que…"), los
-   * fragmentos que se citan se solapan y en pantalla parece que la herramienta
-   * repite tres veces el mismo hallazgo. Se queda con el primero de cada grupo.
-   */
-  function colectorDeEjemplos(maximo = 4, separacion = 120) {
-    const ejemplos = [];
-    let ultimo = -Infinity;
-    return {
-      ejemplos,
-      lleno: () => ejemplos.length >= maximo,
-      agregar(index, texto) {
-        if (ejemplos.length >= maximo || index - ultimo < separacion) return;
-        ultimo = index;
-        ejemplos.push(texto);
-      },
-    };
-  }
-
-  /** Posición relativa (0 a 1) dentro de la parte del texto que tiene contenido. */
-  function posicionRelativa(cuerpo, index) {
-    const inicio = cuerpo.search(/\S/);
-    const fin = cuerpo.replace(/\s+$/, "").length;
-    if (inicio < 0 || fin <= inicio) return 0;
-    return (index - inicio) / (fin - inicio);
-  }
-
-  /**
-   * Encabezados de artículo del articulado, descartando las citas a otras normas.
-   *
-   * No sirve pedir que el encabezado abra línea: al extraer el texto de un PDF,
-   * cada página entera queda en un solo renglón. Lo que distingue una cita es
-   * la palabra que la engancha a la oración ("previsto por el artículo 145") o
-   * la norma que la sigue ("el artículo 4º de la Ley Nº 10.479").
-   */
-  function encabezadosDeArticulo(cuerpo) {
-    // El separador va como opcional: en el Boletín entrerriano conviven
-    // "ARTÍCULO 1º.-", "ARTICULO 2º:" y "ARTICULO 4º " sin nada detrás.
-    const re = /art[íi]culo\s+(\d+)\s*[°ºo]?\s*(bis|ter|quater|quinquies)?\s*[.:\-–—]?/gi;
-    const CONECTORES =
-      /\b(el|del|al|la|las|los|un|una|en|de|por|para|este|esta|dicho|dicha|presente|mismo|misma|cada|seg[úu]n|conforme|previsto|prevista|previstos|previstas|establecido|establecida|citado|citada|referido|referida|mencionado|mencionada|siguiente|anterior|y|o)\s+$/i;
-    const lista = [];
-    let m;
-    while ((m = re.exec(cuerpo))) {
-      if (CONECTORES.test(cuerpo.slice(Math.max(0, m.index - 24), m.index))) continue;
-      const despues = cuerpo.slice(m.index + m[0].length, m.index + m[0].length + 30);
-      if (/^\s*de\s+(la|el|los|las)\s+(ley|constituci[óo]n|decreto|norma|c[óo]digo)/i.test(despues)) continue;
-      lista.push({ numero: Number(m[1]), sufijo: m[2] || "", index: m.index });
-    }
-    return lista;
-  }
-
-  // Números escritos en letras, para cotejarlos con la cifra entre paréntesis.
-  const NUMEROS = {
-    cero: 0, un: 1, uno: 1, una: 1, dos: 2, tres: 3, cuatro: 4, cinco: 5, seis: 6,
-    siete: 7, ocho: 8, nueve: 9, diez: 10, once: 11, doce: 12, trece: 13, catorce: 14,
-    quince: 15, dieciseis: 16, diecisiete: 17, dieciocho: 18, diecinueve: 19, veinte: 20,
-    veintiun: 21, veintiuno: 21, veintiuna: 21, veintidos: 22, veintitres: 23,
-    veinticuatro: 24, veinticinco: 25, veintiseis: 26, veintisiete: 27, veintiocho: 28,
-    veintinueve: 29, treinta: 30, cuarenta: 40, cincuenta: 50, sesenta: 60, setenta: 70,
-    ochenta: 80, noventa: 90, cien: 100, ciento: 100, doscientos: 200, trescientos: 300,
-    cuatrocientos: 400, quinientos: 500, seiscientos: 600, setecientos: 700,
-    ochocientos: 800, novecientos: 900,
-    doscientas: 200, trescientas: 300, cuatrocientas: 400, quinientas: 500,
-    seiscientas: 600, setecientas: 700, ochocientas: 800, novecientas: 900,
-    mil: 1000, millon: 1000000, millones: 1000000,
-  };
-
-  /** Las palabras que multiplican lo anterior en lugar de sumarse. */
-  const MULTIPLICADORES = new Set(["mil", "millon", "millones"]);
-
-  /** Convierte "noventa y seis" en 96. Devuelve null si no es un número escrito. */
-  function valorEnLetras(palabras) {
-    if (!palabras.length) return null;
-    let total = 0;
-    let parcial = 0;
-    for (const p of palabras) {
-      if (p === "y") continue;
-      const v = NUMEROS[p];
-      if (v === undefined) return null;
-      if (MULTIPLICADORES.has(p)) {
-        total += (parcial || 1) * v;
-        parcial = 0;
-      } else {
-        parcial += v;
-      }
-    }
-    return total + parcial;
-  }
-
-  /** Las palabras-número que vienen pegadas antes de un "(" con una cifra adentro. */
-  function letrasAntesDe(cuerpo, index) {
-    const previo = cuerpo
-      .slice(Math.max(0, index - 60), index)
-      .normalize("NFD")
-      .replace(/[̀-ͯ]/g, "")
-      .toLowerCase()
-      .trim()
-      .split(/\s+/);
-    const tomadas = [];
-    for (let i = previo.length - 1; i >= 0; i--) {
-      // Un token puede venir pegado a lo anterior por un signo (":TREINTA"):
-      // de cada token se toma el último tramo de letras seguidas.
-      const p = (previo[i].split(/[^a-zñ]+/).filter(Boolean).pop() || "");
-      if (p === "y" || NUMEROS[p] !== undefined) tomadas.unshift(p);
-      else break;
-    }
-    while (tomadas.length && tomadas[0] === "y") tomadas.shift();
-    return tomadas;
   }
 
   return [
@@ -337,7 +189,8 @@ window.ReglasProvincialER = (() => {
       fuente: "Práctica legislativa entrerriana (53/53 leyes, Boletín Oficial 2025-2026)",
       ubicacionFija: "Al final del articulado",
       check(text) {
-        const cuerpo = soloArticulado(text);
+        // Sin el texto citado: un "Comuníquese" entre comillas es de otra norma.
+        const cuerpo = cuerpoNormativo(text);
         if (/comun[íi]quese|de\s+forma\s*[.\-]/i.test(cuerpo)) return { cumple: true };
         return { cumple: false, ejemplos: ["El articulado termina sin un artículo de forma."] };
       },
@@ -355,7 +208,9 @@ window.ReglasProvincialER = (() => {
       fuente: "Práctica legislativa entrerriana (53/53 leyes)",
       check(text, { contexto }) {
         const re = /comun[íi]quese,?\s*publ[íi]quese\s*y\s*arch[íi]vese/i;
-        const m = re.exec(text);
+        // Sólo el articulado del proyecto, igual que er-prov-015: la fórmula
+        // citada entre comillas o mencionada en los fundamentos no es su cierre.
+        const m = re.exec(cuerpoNormativo(text));
         if (!m) return { cumple: true };
         return { cumple: false, ejemplos: [contexto(text, m.index, 70)] };
       },

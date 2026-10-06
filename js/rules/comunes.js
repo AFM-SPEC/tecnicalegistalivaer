@@ -1640,8 +1640,10 @@ window.ReglasComunes = (() => {
       sugerencia: 'Usar el verbo que dispone: "ORDENA", "Establécese…", "Prohíbese…".',
       fuentes: fuentes(NAC("regla 28, punto 1"), MUN("MUN-048")),
       check(text, { contexto }) {
+        // "RECOMIENDA" y "ACONSEJA" sólo en mayúsculas, como fórmula. Las demás
+        // formas pueden abrir una oración: "Recomiéndase…", "Se sugiere…".
         const re =
-          /\bRECOMIENDA\b|\brecomi[ée]ndase\b|\bse\s+recomienda\b|\bsugi[ée]rese\b|\bse\s+sugiere\b|\bse\s+aconseja\b|\bACONSEJA\b/g;
+          /\bRECOMIENDA\b|\b[Rr]ecomi[ée]ndase\b|\b[Ss]e\s+recomienda\b|\b[Ss]ugi[ée]rese\b|\b[Ss]e\s+sugiere\b|\b[Ss]e\s+aconseja\b|\bACONSEJA\b/g;
         return citarCoincidencias(text, textoPropio(text), re, contexto, { maximo: 3, radio: 55 });
       },
     },
